@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import {
     CheckCircleIcon,
@@ -13,13 +13,60 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
     const [marcas, setMarcas] = useState([]);
     const [modelos, setModelos] = useState([]);
     const [usarVision, setUsarVision] = useState(false);
+    const [highlightedModeloIndex, setHighlightedModeloIndex] = useState(-1);
+    const [highlightedIndex, setHighlightedIndex] = useState(-1);
+    const listaRef = useRef(null);
 
-    useEffect(() => {
-        fetch("http://localhost:8081/sgc/api/v1/marca")
-            .then((res) => res.json())
-            .then(setMarcas)
-            .catch(() => toast.error("No se pudieron cargar las marcas"));
-    }, []);
+    const manejarTeclado = (e) => {
+        if (marcas.length === 0) return;
+
+        if (e.key === "ArrowDown") {
+            e.preventDefault();
+            setHighlightedIndex((prev) => (prev + 1) % marcas.length);
+        } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            setHighlightedIndex((prev) => (prev - 1 + marcas.length) % marcas.length);
+        } else if (e.key === "Enter" && highlightedIndex >= 0) {
+            e.preventDefault();
+            const seleccionada = marcas[highlightedIndex];
+            setFormData({
+                ...formData,
+                IdMarca: seleccionada.idMarca,
+                NombreMarca: seleccionada.nombreMarca,
+                IdModelo: "",
+            });
+            setMarcas([]);
+            setHighlightedIndex(-1);
+        } else if (e.key === "Escape") {
+            setMarcas([]);
+            setHighlightedIndex(-1);
+        }
+    };
+
+    const manejarTecladoModelo = (e) => {
+        if (modelos.length === 0) return;
+        if (e.key === "ArrowDown") {
+            e.preventDefault();
+            setHighlightedModeloIndex((prev) => (prev + 1) % modelos.length);
+        } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            setHighlightedModeloIndex((prev) => (prev - 1 + modelos.length) % modelos.length);
+        } else if (e.key === "Enter" && highlightedModeloIndex >= 0) {
+            e.preventDefault();
+            const seleccionada = modelos[highlightedModeloIndex];
+            setFormData({
+                ...formData,
+                IdModelo: seleccionada.idModelo,
+                NombreModelo: seleccionada.nombreModelo,
+            });
+            setModelos([]);
+            setHighlightedModeloIndex(-1);
+        } else if (e.key === "Escape") {
+            setModelos([]);
+            setHighlightedModeloIndex(-1);
+        }
+    };
+
 
 
     const buscarMarcas = async (query) => {
@@ -41,18 +88,19 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
             setModelos([]);
             return;
         }
-
-
-
-        fetch(
-            `http://localhost:8081/sgc/api/v1/modelo/buscar?nombre=${encodeURIComponent(
-                nombre
-            )}&idMarca=${formData.IdMarca}`
-        )
+        fetch(`http://localhost:8081/sgc/api/v1/modelo/buscar?nombre=${encodeURIComponent(nombre)}&idMarca=${formData.IdMarca}`)
             .then((res) => res.json())
-            .then(setModelos)
+            .then((data) => {
+                setModelos(data);
+                setHighlightedModeloIndex(-1);
+            })
             .catch(() => toast.error("Error al buscar modelos"));
     };
+
+
+
+
+
 
     const validar = () => {
         const e = {};
@@ -70,6 +118,12 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
             e.NroMotorVehiculo = "Requerido";
         } else if (!/^[A-Z0-9]{6,}$/i.test(formData.NroMotorVehiculo)) {
             e.NroMotorVehiculo = "Motor inválido (mín. 6 caracteres)";
+        }
+
+        if (!formData.NroMatricula?.trim()) {
+            e.NroMatricula = "Requerido";
+        } else if (!/^[A-Z0-9]{6,}$/i.test(formData.NroMatricula)) {
+            e.NroMatricula = "Matricula inválida (mín. 6 caracteres)";
         }
 
         if (!formData.AnoVehiculo) {
@@ -92,6 +146,7 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
 
         setErrores(e);
         setFormValido(Object.keys(e).length === 0);
+
     };
 
     useEffect(() => {
@@ -136,12 +191,14 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
                                 onChange={(e) => {
                                     const nombre = e.target.value;
                                     setFormData({ ...formData, NombreMarca: nombre, IdMarca: "" });
+                                    setHighlightedIndex(-1); // reinicia al escribir
                                     if (nombre.length >= 1) {
                                         buscarMarcas(nombre);
                                     } else {
                                         setMarcas([]);
                                     }
                                 }}
+                                onKeyDown={manejarTeclado}
                                 className={`w-full border p-2 rounded ${errores.IdMarca
                                     ? "border-red-500"
                                     : formData.IdMarca
@@ -150,9 +207,10 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
                                     }`}
                             />
 
+
                             {marcas.length > 0 && (
                                 <ul className="absolute z-50 bg-white text-blue-800 border rounded shadow mt-1 max-h-48 overflow-y-auto w-full">
-                                    {marcas.map((marca) => (
+                                    {marcas.map((marca, index) => (
                                         <li
                                             key={marca.idMarca}
                                             onClick={() => {
@@ -163,13 +221,15 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
                                                     IdModelo: "",
                                                 });
                                                 setMarcas([]);
+                                                setHighlightedIndex(-1);
                                             }}
-                                            className="px-3 py-2 hover:bg-blue-100 cursor-pointer"
+                                            className={`px-3 py-2 cursor-pointer ${highlightedIndex === index ? "bg-blue-200" : "hover:bg-blue-100"}`}
                                         >
                                             {marca.nombreMarca}
                                         </li>
                                     ))}
                                 </ul>
+
 
                             )}
 
@@ -181,7 +241,7 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
 
 
                         {/* Modelo con input */}
-                        <div>
+                        <div className="relative">
                             <label className="block text-sm font-medium mb-1">Modelo</label>
                             <input
                                 type="text"
@@ -192,15 +252,16 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
                                     setFormData({
                                         ...formData,
                                         NombreModelo: nombre,
-                                        IdModelo: "", // se limpia hasta seleccionar uno
+                                        IdModelo: "",
                                     });
                                     buscarModelos(nombre);
                                 }}
+                                onKeyDown={manejarTecladoModelo}
                                 className={`w-full border p-2 rounded ${errores.NombreModelo
-                                    ? "border-red-500"
-                                    : formData.IdModelo
-                                        ? "border-green-500"
-                                        : "border-gray-300"
+                                        ? "border-red-500"
+                                        : formData.IdModelo
+                                            ? "border-green-500"
+                                            : "border-gray-300"
                                     }`}
                                 placeholder={
                                     !formData.IdMarca
@@ -213,10 +274,13 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
                             )}
                             {modelos.length > 0 && (
                                 <ul className="border rounded bg-white mt-1 shadow-md max-h-40 overflow-auto">
-                                    {modelos.map((m) => (
+                                    {modelos.map((m, index) => (
                                         <li
                                             key={m.idModelo}
-                                            className="px-3 py-1 hover:bg-blue-100 cursor-pointer"
+                                            className={`px-3 py-1 cursor-pointer ${highlightedModeloIndex === index
+                                                    ? "bg-blue-200"
+                                                    : "hover:bg-blue-100"
+                                                }`}
                                             onClick={() => {
                                                 setFormData({
                                                     ...formData,
@@ -224,6 +288,7 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
                                                     NombreModelo: m.nombreModelo,
                                                 });
                                                 setModelos([]);
+                                                setHighlightedModeloIndex(-1);
                                             }}
                                         >
                                             {m.nombreModelo}
@@ -232,6 +297,7 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
                                 </ul>
                             )}
                         </div>
+
 
                         {/* Campos restantes */}
                         <div className="grid gap-5">
@@ -254,6 +320,28 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
                                 />
                                 {errores.NroChasisVehiculo && (
                                     <p className="text-sm text-red-500 mt-1">{errores.NroChasisVehiculo}</p>
+                                )}
+                            </div>
+
+                            {/* Nro. de MATRICULA */}
+                            <div className="relative">
+                                <label className="block text-sm font-medium mb-1">Nro. de matricula</label>
+                                <input
+                                    type="text"
+                                    placeholder="Ej: LAA0777"
+                                    value={formData.NroMatricula}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, NroMatricula: e.target.value.toUpperCase() })
+                                    }
+                                    className={`w-full border p-2 rounded ${errores.NroMatricula
+                                        ? "border-red-500"
+                                        : formData.NroMatricula
+                                            ? "border-green-500"
+                                            : "border-gray-300"
+                                        }`}
+                                />
+                                {errores.NroMatricula && (
+                                    <p className="text-sm text-red-500 mt-1">{errores.NroMatricula}</p>
                                 )}
                             </div>
 
@@ -359,7 +447,7 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
                                 disabled={!formValido}
                                 onClick={() =>
                                     formValido
-                                        ? onNext()
+                                        ? onNext() + console.log(formData)
                                         : toast.error("Corregí los campos antes de continuar")
                                 }
                                 className={`py-2 px-4 rounded text-white font-semibold transition ${formValido

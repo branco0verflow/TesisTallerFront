@@ -13,7 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<UHome />}/>
         <Route path="/crearReserva" element={<CrearReserva />}/>
-        <Route path="/a" element={<PasoDatosAgenda />}/>
+
         
         <Route path="/AVisordeTarea" element={<VisorDeTareas />} />
         <Route path="*" element={<Navigate to="/" />} />

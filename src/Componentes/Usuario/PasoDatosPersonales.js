@@ -43,9 +43,10 @@ export default function DatosPersonales({ formData, setFormData, onNext }) {
 
     if (!formData.TelefonoCliente?.trim()) {
       e.TelefonoCliente = "*";
-    } else if (!/^\d{7,15}$/.test(formData.TelefonoCliente)) {
+    } else if (!/^\+\d{7,15}$/.test(formData.TelefonoCliente)) {
       e.TelefonoCliente = "Teléfono inválido";
     }
+
 
     if (!formData.DireccionCliente?.trim()) e.DireccionCliente = "*";
 
@@ -111,13 +112,12 @@ export default function DatosPersonales({ formData, setFormData, onNext }) {
                   onChange={(e) =>
                     setFormData({ ...formData, [campo.name]: e.target.value })
                   }
-                  className={`w-full pl-10 pr-10 border p-2 rounded ${
-                    error
-                      ? "border-red-500"
-                      : isValid
+                  className={`w-full pl-10 pr-10 border p-2 rounded ${error
+                    ? "border-red-500"
+                    : isValid
                       ? "border-green-500"
                       : "border-gray-300"
-                  }`}
+                    }`}
                 />
                 {error && (
                   <ExclamationCircleIcon
@@ -154,17 +154,16 @@ export default function DatosPersonales({ formData, setFormData, onNext }) {
             <input
               type="tel"
               placeholder="Número sin prefijo"
-              value={formData.TelefonoCliente}
+              value={formData.TelefonoCliente?.replace(codigoTelefono, "") || ""}
               onChange={(e) =>
-                setFormData({ ...formData, TelefonoCliente: e.target.value })
+                setFormData({ ...formData, TelefonoCliente: codigoTelefono + e.target.value })
               }
-              className={`w-full border p-2 rounded-r ${
-                errores.TelefonoCliente
-                  ? "border-red-500"
-                  : formData.TelefonoCliente?.trim()
+              className={`w-full border p-2 rounded-r ${errores.TelefonoCliente
+                ? "border-red-500"
+                : formData.TelefonoCliente?.trim()
                   ? "border-green-500"
                   : "border-gray-300"
-              }`}
+                }`}
             />
           </div>
           {errores.TelefonoCliente && (
@@ -172,18 +171,18 @@ export default function DatosPersonales({ formData, setFormData, onNext }) {
           )}
         </div>
 
+
         <button
           disabled={!formValido}
           onClick={() => {
             if (formValido) onNext(),
-            console.log(formData);
+              console.log(formData);
             else toast.error("Por favor corregí los errores antes de continuar");
           }}
-          className={`mt-4 px-4 py-2 rounded text-white font-semibold transition ${
-            formValido
-              ? "bg-blue-600 hover:bg-blue-700"
-              : "bg-gray-400 cursor-not-allowed"
-          }`}
+          className={`mt-4 px-4 py-2 rounded text-white font-semibold transition ${formValido
+            ? "bg-blue-600 hover:bg-blue-700"
+            : "bg-gray-400 cursor-not-allowed"
+            }`}
         >
           Siguiente
         </button>

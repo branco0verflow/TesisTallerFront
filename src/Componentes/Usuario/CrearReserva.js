@@ -2,7 +2,6 @@ import { useState } from "react";
 import PasoDatosPersonales from "./PasoDatosPersonales";
 import PasoDatosVehiculo from "./PasoDatosVehiculo";
 import PasoDatosAgenda from "./PasoDatosAgenda";
-//import PasoAgenda from "./PasoAgenda";
 import MigasDePan from "./MigasDePan";
 import MenuNavBar from "./MenuNavBar";
 import Footer from "./Footer";
@@ -27,7 +26,9 @@ export default function CrearReserva() {
         NroMotorVehiculo: "",
         AnoVehiculo: "",
         CilindradaVehiculo: "",
-        KilometrajeVehiculo: ""
+        KilometrajeVehiculo: "",
+        tareas: [],
+        comentarios: ""
 
     });
 
@@ -71,8 +72,6 @@ export default function CrearReserva() {
                         <PasoDatosAgenda
                             formData={formData}
                             setFormData={setFormData}
-                            onNext={handleNext}
-                            onBack={handleBack}
                         />
                     )}
                 </div>
