@@ -20,7 +20,9 @@ export default function CrearReserva() {
         TelefonoCliente: "",
         DireccionCliente: "",
         IdMarca: "",
+        NombreMarca: "",
         IdModelo: "",
+        NombreModelo: "",
         NroChasisVehiculo: "",
         NroMatricula: "",
         NroMotorVehiculo: "",
@@ -28,7 +30,7 @@ export default function CrearReserva() {
         CilindradaVehiculo: "",
         KilometrajeVehiculo: "",
         tareas: [],
-        comentarios: ""
+        comentario: ""
 
     });
 
@@ -36,11 +38,7 @@ export default function CrearReserva() {
     const handleNext = () => setPasoActual((prev) => prev + 1);
     const handleBack = () => setPasoActual((prev) => prev - 1);
 
-    const backgrounds = {
-  1: fullScreen1,
-  2: fullScreen2,
-  3: fullScreen3,
-};
+    const backgrounds = {1: fullScreen1, 2: fullScreen2, 3: fullScreen3 };
 
 
 
@@ -49,34 +47,23 @@ export default function CrearReserva() {
         <div>
             <MenuNavBar />
             <FullScreen background={backgrounds[pasoActual]}>
+
                 <div className="w-full px-4">
 
                     <MigasDePan paso={pasoActual} />
 
                     {pasoActual === 1 && (
-                        <PasoDatosPersonales
-                            formData={formData}
-                            setFormData={setFormData}
-                            onNext={handleNext}
-                        />
+                        <PasoDatosPersonales formData={formData} setFormData={setFormData} onNext={handleNext} />
                     )}
                     {pasoActual === 2 && (
-                        <PasoDatosVehiculo
-                            formData={formData}
-                            setFormData={setFormData}
-                            onNext={handleNext}
-                            onBack={handleBack}
-                        />
+                        <PasoDatosVehiculo formData={formData} setFormData={setFormData} onNext={handleNext} onBack={handleBack} />
                     )}
                     {pasoActual === 3 && (
-                        <PasoDatosAgenda
-                            formData={formData}
-                            setFormData={setFormData}
-                        />
+                        <PasoDatosAgenda formData={formData} setFormData={setFormData} onBack={handleBack} />
                     )}
                 </div>
-            </FullScreen>
 
+            </FullScreen>
 
             <Footer />
         </div>

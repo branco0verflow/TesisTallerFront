@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { XCircleIcon } from "@heroicons/react/20/solid";
 
-export default function PasoDatosAgenda({ formData, setFormData }) {
+export default function PasoDatosAgenda({ formData, setFormData, onBack }) {
     const [tareasDisponibles, setTareasDisponibles] = useState([]);
     const [tareaSeleccionada, setTareaSeleccionada] = useState("");
 
@@ -32,6 +32,7 @@ export default function PasoDatosAgenda({ formData, setFormData }) {
         );
         if (yaAgregada) return;
 
+
         const nuevasTareas = [
             ...formData.tareas,
             {
@@ -43,6 +44,10 @@ export default function PasoDatosAgenda({ formData, setFormData }) {
         setFormData(prev => ({ ...prev, tareas: nuevasTareas }));
         setTareaSeleccionada("");
     };
+
+    const corroborarFuncionamiento = () => {
+        console.log(formData);
+    }
 
     const quitarTarea = (id) => {
         const nuevasTareas = formData.tareas.filter(
@@ -139,10 +144,21 @@ export default function PasoDatosAgenda({ formData, setFormData }) {
             {/* Botón Ver Disponibilidad */}
             <div className="text-center">
                 <button
-                    onClick={consultarDisponibilidad}
+                    onClick={corroborarFuncionamiento}
                     className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold shadow"
                 >
                     Ver disponibilidad
+                </button>
+            </div>
+
+
+
+            <div className="mt-4 flex justify-between">
+                <button
+                    onClick={onBack}
+                    className="bg-blue-600 hover:bg-blue-700 text-white rounded py-2 px-4 font-semibold"
+                >
+                    Atrás
                 </button>
             </div>
         </div>

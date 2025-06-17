@@ -7,7 +7,24 @@ import {
 import IngresoVision from "./IngresoVision";
 import escanearImg from "../../Images/ScanerMode.png";
 
-export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBack }) {
+export default function PasoDatosVehiculo({
+    formData = {
+        NombreMarca: "",
+        IdMarca: "",
+        NombreModelo: "",
+        IdModelo: "",
+        NroChasisVehiculo: "",
+        NroMotorVehiculo: "",
+        NroMatricula: "",
+        CilindradaVehiculo: "",
+        AnoVehiculo: "",
+        KilometrajeVehiculo: ""
+    },
+    setFormData = () => { },
+    onNext,
+    onBack,
+    datos
+}) {
     const [errores, setErrores] = useState({});
     const [formValido, setFormValido] = useState(false);
     const [marcas, setMarcas] = useState([]);
@@ -16,6 +33,8 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
     const [highlightedModeloIndex, setHighlightedModeloIndex] = useState(-1);
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
     const listaRef = useRef(null);
+
+
 
     const manejarTeclado = (e) => {
         if (marcas.length === 0) return;
@@ -122,9 +141,10 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
 
         if (!formData.NroMatricula?.trim()) {
             e.NroMatricula = "Requerido";
-        } else if (!/^[A-Z0-9]{6,}$/i.test(formData.NroMatricula)) {
-            e.NroMatricula = "Matricula inválida (mín. 6 caracteres)";
+        } else if (!/^[A-Z0-9\s]{6,}$/i.test(formData.NroMatricula)) {
+            e.NroMatricula = "Matrícula inválida (mín. 6 caracteres, puede incluir espacios)";
         }
+
 
         if (!formData.AnoVehiculo) {
             e.AnoVehiculo = "Requerido";
@@ -134,7 +154,7 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
 
         if (!formData.CilindradaVehiculo?.trim()) {
             e.CilindradaVehiculo = "Requerido";
-        } else if (!/^\d{1,3}(\.\d{1,2})?$/.test(formData.CilindradaVehiculo)) {
+        } else if (!/^\d{1,4}(\.\d{1,2})?$/.test(formData.CilindradaVehiculo)) {
             e.CilindradaVehiculo = "Cilindrada inválida";
         }
 
@@ -152,6 +172,8 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
     useEffect(() => {
         validar();
     }, [formData]);
+
+
 
 
 
@@ -191,12 +213,13 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
                                 onChange={(e) => {
                                     const nombre = e.target.value;
                                     setFormData({ ...formData, NombreMarca: nombre, IdMarca: "" });
-                                    setHighlightedIndex(-1); // reinicia al escribir
+                                    setHighlightedIndex(-1);
                                     if (nombre.length >= 1) {
                                         buscarMarcas(nombre);
                                     } else {
                                         setMarcas([]);
                                     }
+
                                 }}
                                 onKeyDown={manejarTeclado}
                                 className={`w-full border p-2 rounded ${errores.IdMarca
@@ -256,12 +279,13 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
                                     });
                                     buscarModelos(nombre);
                                 }}
+
                                 onKeyDown={manejarTecladoModelo}
                                 className={`w-full border p-2 rounded ${errores.NombreModelo
-                                        ? "border-red-500"
-                                        : formData.IdModelo
-                                            ? "border-green-500"
-                                            : "border-gray-300"
+                                    ? "border-red-500"
+                                    : formData.IdModelo
+                                        ? "border-green-500"
+                                        : "border-gray-300"
                                     }`}
                                 placeholder={
                                     !formData.IdMarca
@@ -278,8 +302,8 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
                                         <li
                                             key={m.idModelo}
                                             className={`px-3 py-1 cursor-pointer ${highlightedModeloIndex === index
-                                                    ? "bg-blue-200"
-                                                    : "hover:bg-blue-100"
+                                                ? "bg-blue-200"
+                                                : "hover:bg-blue-100"
                                                 }`}
                                             onClick={() => {
                                                 setFormData({
@@ -299,7 +323,6 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
                         </div>
 
 
-                        {/* Campos restantes */}
                         <div className="grid gap-5">
                             {/* Nro. de chasis */}
                             <div className="relative">
@@ -328,10 +351,12 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
                                 <label className="block text-sm font-medium mb-1">Nro. de matricula</label>
                                 <input
                                     type="text"
-                                    placeholder="Ej: LAA0777"
+                                    placeholder="Ej: LAA 0777"
                                     value={formData.NroMatricula}
+
                                     onChange={(e) =>
                                         setFormData({ ...formData, NroMatricula: e.target.value.toUpperCase() })
+
                                     }
                                     className={`w-full border p-2 rounded ${errores.NroMatricula
                                         ? "border-red-500"
@@ -413,7 +438,7 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
 
                             {/* Kilometraje */}
                             <div className="relative">
-                                <label className="block text-sm font-medium mb-1">Kilometraje</label>
+                                <label className="block text-sm font-medium mb-1">Kilometraje actual</label>
                                 <input
                                     type="number"
                                     placeholder="Ej: 85000"
@@ -445,11 +470,15 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
                             </button>
                             <button
                                 disabled={!formValido}
-                                onClick={() =>
-                                    formValido
-                                        ? onNext() + console.log(formData)
-                                        : toast.error("Corregí los campos antes de continuar")
-                                }
+
+                                onClick={() => {
+                                    if (formValido) {
+                                        console.log(formData);
+                                        onNext();
+                                    } else {
+                                        toast.error("Corregí los campos antes de continuar");
+                                    }
+                                }}
                                 className={`py-2 px-4 rounded text-white font-semibold transition ${formValido
                                     ? "bg-blue-600 hover:bg-blue-700"
                                     : "bg-gray-400 cursor-not-allowed"
@@ -461,7 +490,7 @@ export default function PasoDatosVehiculo({ formData, setFormData, onNext, onBac
                     </div>
                 </>
             ) : (
-                <IngresoVision onVolver={() => setUsarVision(false)} />
+                <IngresoVision onVolver={() => setUsarVision(false)} onNext={onNext} formData={formData} setFormData={setFormData} />
             )}
         </div>
     );
