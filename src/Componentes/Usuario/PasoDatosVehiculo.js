@@ -6,6 +6,7 @@ import {
 } from "@heroicons/react/20/solid";
 import IngresoVision from "./IngresoVision";
 import escanearImg from "../../Images/ScanerMode.png";
+import ModalVerificarDatos from "./ModalVerificarDatos";
 
 export default function PasoDatosVehiculo({
     formData = {
@@ -32,6 +33,7 @@ export default function PasoDatosVehiculo({
     const [usarVision, setUsarVision] = useState(false);
     const [highlightedModeloIndex, setHighlightedModeloIndex] = useState(-1);
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
+    const [showModal, setShowModal] = useState(false);
     const listaRef = useRef(null);
 
 
@@ -172,10 +174,6 @@ export default function PasoDatosVehiculo({
     useEffect(() => {
         validar();
     }, [formData]);
-
-
-
-
 
 
 
@@ -468,24 +466,34 @@ export default function PasoDatosVehiculo({
                             >
                                 Atrás
                             </button>
-                            <button
-                                disabled={!formValido}
+                            <div>
+                                <button
+                                    disabled={!formValido}
+                                    onClick={() => {
+                                        if (formValido) {
+                                            setShowModal(true);
+                                        } else {
+                                            toast.error("Corregí los campos antes de continuar");
+                                        }
+                                    }}
+                                    className={`py-2 px-4 rounded text-white font-semibold transition ${formValido
+                                        ? "bg-blue-600 hover:bg-blue-700"
+                                        : "bg-gray-400 cursor-not-allowed"
+                                        }`}
+                                >
+                                    Verificar datos
+                                </button>
 
-                                onClick={() => {
-                                    if (formValido) {
-                                        console.log(formData);
-                                        onNext();
-                                    } else {
-                                        toast.error("Corregí los campos antes de continuar");
-                                    }
-                                }}
-                                className={`py-2 px-4 rounded text-white font-semibold transition ${formValido
-                                    ? "bg-blue-600 hover:bg-blue-700"
-                                    : "bg-gray-400 cursor-not-allowed"
-                                    }`}
-                            >
-                                Siguiente
-                            </button>
+                                {showModal && (
+                                    <ModalVerificarDatos
+                                        formData={formData}
+                                        onClose={() => setShowModal(false)}
+                                        onConfirm={() => {
+                                            setShowModal(false);
+                                        }}
+                                    />
+                                )}
+                            </div>
                         </div>
                     </div>
                 </>

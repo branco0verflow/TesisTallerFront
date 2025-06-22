@@ -6,9 +6,9 @@ import MigasDePan from "./MigasDePan";
 import MenuNavBar from "./MenuNavBar";
 import Footer from "./Footer";
 import FullScreen from "../FullScreen";
-import fullScreen1 from "../../Images/fulScreen1.png";
-import fullScreen2 from "../../Images/fulScreen2.png";
-import fullScreen3 from "../../Images/fulScreen3.png";
+import fullScreen1 from "../../Images/fulScreen3.png";
+import fullScreen2 from "../../Images/fulScreen1.png";
+import fullScreen3 from "../../Images/fulScreen2.png";
 
 export default function CrearReserva() {
     const [pasoActual, setPasoActual] = useState(1);
@@ -30,6 +30,9 @@ export default function CrearReserva() {
         CilindradaVehiculo: "",
         KilometrajeVehiculo: "",
         tareas: [],
+        fechaSeleccionada: null,
+        horaInicio: "",
+        horaFin: "",
         comentario: ""
 
     });
@@ -53,14 +56,15 @@ export default function CrearReserva() {
                     <MigasDePan paso={pasoActual} />
 
                     {pasoActual === 1 && (
-                        <PasoDatosPersonales formData={formData} setFormData={setFormData} onNext={handleNext} />
+                        <PasoDatosAgenda formData={formData} setFormData={setFormData} onNext={handleNext} />
                     )}
                     {pasoActual === 2 && (
-                        <PasoDatosVehiculo formData={formData} setFormData={setFormData} onNext={handleNext} onBack={handleBack} />
+                        <PasoDatosPersonales formData={formData} setFormData={setFormData} onBack={handleBack} onNext={handleNext} />
                     )}
                     {pasoActual === 3 && (
-                        <PasoDatosAgenda formData={formData} setFormData={setFormData} onBack={handleBack} />
+                        <PasoDatosVehiculo formData={formData} setFormData={setFormData} onNext={handleNext} onBack={handleBack} />
                     )}
+                    
                 </div>
 
             </FullScreen>

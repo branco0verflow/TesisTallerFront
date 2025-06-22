@@ -1,9 +1,18 @@
 import { useEffect, useState } from "react";
 import { XCircleIcon } from "@heroicons/react/20/solid";
+import ModalCalendario from "./ModalCalendario";
+import ModalHorarios from "./ModalHorarios";
 
-export default function PasoDatosAgenda({ formData, setFormData, onBack }) {
+export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
     const [tareasDisponibles, setTareasDisponibles] = useState([]);
     const [tareaSeleccionada, setTareaSeleccionada] = useState("");
+    const [mostrarCalendario, setMostrarCalendario] = useState(false);
+    const [mostrarHorarios, setMostrarHorarios] = useState(false);
+    const [horarios, setHorarios] = useState([]);
+    const [diasDisponibles, setDiasDisponibles] = useState([]);
+    const [formValido, setFormValido] = useState(false);
+    const [DisponibilidadButtonVisible, setDisponibilidadButtonVisible] = useState(false);
+
 
     const tareasSeleccionadas = Array.isArray(formData?.tareas)
         ? formData.tareas
@@ -49,6 +58,15 @@ export default function PasoDatosAgenda({ formData, setFormData, onBack }) {
         console.log(formData);
     }
 
+    useEffect(() => {
+        if (Array.isArray(formData.tareas) && formData.tareas.length > 0) {
+            setDisponibilidadButtonVisible(true);
+        } else {
+            setDisponibilidadButtonVisible(false);
+        }
+    }, [formData.tareas]);
+
+
     const quitarTarea = (id) => {
         const nuevasTareas = formData.tareas.filter(
             t => t.idTipoTarea !== id
@@ -61,17 +79,70 @@ export default function PasoDatosAgenda({ formData, setFormData, onBack }) {
     };
 
     const consultarDisponibilidad = () => {
-        fetch("http://localhost:8081/sgc/api/v1/disponibilidad")
+        const ids = formData.tareas.map(t => t.idTipoTarea);
+        const queryParams = new URLSearchParams({
+            ids: ids.join(","),
+            limiteDias: "20"
+        });
+
+        fetch(`http://localhost:8081/sgc/api/v1/disponibilidad?${queryParams}`)
             .then(res => res.json())
             .then(data => {
-                console.log("Fechas disponibles:", data);
-                // Aquí puedes mostrar el calendario si deseas
+                setDiasDisponibles(data);
+                setMostrarCalendario(true);
             })
             .catch(err => console.error("Error al consultar disponibilidad:", err));
     };
 
+    const handleSeleccionDia = (fecha) => {
+        if (!fecha) return; // para prevenir un estado nulo da problemas resolver BB
+
+        setMostrarCalendario(false);
+
+        setFormData(prev => ({
+            ...prev,
+            fechaSeleccionada: fecha.toISOString().split("T")[0] // Año mes y día es necesario ese orden en todo momento BB
+        }));
+
+        const ids = formData.tareas.map(t => t.idTipoTarea);
+        const queryParams = new URLSearchParams({
+            ids: ids.join(","),
+            fecha: fecha.toISOString().split("T")[0]
+        });
+
+        fetch(`http://localhost:8081/sgc/api/v1/disponibilidad/horas?${queryParams}`)
+            .then(res => res.json())
+            .then(data => {
+                setHorarios(data);
+                setMostrarHorarios(true);
+            })
+            .catch(err => console.error("Error al consultar horarios:", err));
+    };
+
+    const handleSeleccionHorario = (horario) => {
+        setMostrarHorarios(false);
+        console.log("Horario seleccionado:", horario);
+
+        setFormData(prev => ({
+            ...prev,
+            fechaSeleccionada: prev.fechaSeleccionada,
+            horaInicio: horario.inicio,
+            horaFin: horario.fin
+        }));
+
+        console.log(formData);
+    };
+
+    useEffect(() => {
+        if (formData.horaInicio && formData.fechaSeleccionada) {
+            setFormValido(true);
+        } else {
+            setFormValido(false);
+        }
+    }, [formData.horaInicio, formData.fechaSeleccionada]);
+
     return (
-        <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+        <div className="animate-fade-in max-w-2xl mx-auto px-4 py-6 space-y-6">
             {/* Sección Tareas */}
             <div>
                 <label htmlFor="tarea" className="block text-sm font-medium text-gray-700 mb-1">
@@ -85,7 +156,7 @@ export default function PasoDatosAgenda({ formData, setFormData, onBack }) {
                         onChange={(e) => setTareaSeleccionada(e.target.value)}
                         className="w-full border border-gray-300 rounded-md p-2"
                     >
-                        <option value="">-- Selecciona una tarea --</option>
+                        <option value="">Motivos de cita</option>
                         {tareasDisponibles.map((tarea) => (
                             <option
                                 key={tarea.idTipoTarea}
@@ -127,7 +198,14 @@ export default function PasoDatosAgenda({ formData, setFormData, onBack }) {
                 </ul>
             </div>
 
-            {/* Comentarios */}
+            
+
+            {/* Botón Ver Disponibilidad */}
+            {DisponibilidadButtonVisible && (
+                <div className="animate-fade-in text-center">
+
+
+                    {/* Comentarios */}
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                     Comentarios o consultas adicionales
@@ -141,26 +219,55 @@ export default function PasoDatosAgenda({ formData, setFormData, onBack }) {
                 />
             </div>
 
-            {/* Botón Ver Disponibilidad */}
-            <div className="text-center">
+
+                    <button
+                        onClick={consultarDisponibilidad}
+                        className="animate-fade-in bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold shadow"
+                    >
+                        Ver disponibilidad
+                    </button>
+
+                    {mostrarCalendario && (
+                        <ModalCalendario
+                            diasDisponibles={diasDisponibles}
+                            onClose={() => setMostrarCalendario(false)}
+                            onDiaSeleccionado={handleSeleccionDia}
+                        />
+                    )}
+
+                    {mostrarHorarios && (
+                        <ModalHorarios
+                            horarios={horarios}
+                            onClose={() => setMostrarHorarios(false)}
+                            onSeleccionHorario={handleSeleccionHorario}
+                        />
+                    )}
+                </div>
+
+
+            )}
+
+            <div className="flex justify-end">
                 <button
-                    onClick={corroborarFuncionamiento}
-                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold shadow"
+                    disabled={!formValido}
+                    onClick={() => {
+                        if (formValido) {
+                            onNext();
+                            console.log(formData);
+                            console.log(formData.horaInicio + formData.horaFin);
+                        } else {
+                            toast.error("Por favor corregí los errores antes de continuar");
+                        }
+                    }}
+                    className={`mt-4 px-4 py-2 rounded text-white font-semibold transition ${formValido
+                        ? "bg-blue-600 hover:bg-blue-700"
+                        : "bg-gray-400 cursor-not-allowed"
+                        }`}
                 >
-                    Ver disponibilidad
+                    Siguiente
                 </button>
             </div>
 
-
-
-            <div className="mt-4 flex justify-between">
-                <button
-                    onClick={onBack}
-                    className="bg-blue-600 hover:bg-blue-700 text-white rounded py-2 px-4 font-semibold"
-                >
-                    Atrás
-                </button>
-            </div>
         </div>
     );
 }

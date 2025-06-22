@@ -1,8 +1,8 @@
 export default function MigasDePan({ paso }) {
   const pasos = [
-    { id: 1, label: "Datos" },
-    { id: 2, label: "Vehículo" },
-    { id: 3, label: "Agenda" },
+    { id: 1, label: "Agenda" },
+    { id: 2, label: "Datos" },
+    { id: 3, label: "Vehículo" },
   ];
 
   return (

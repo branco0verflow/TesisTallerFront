@@ -18,7 +18,7 @@ const paises = [
   { pais: "Estados Unidos", codigo: "+1", emoji: "🇺🇸" },
 ];
 
-export default function DatosPersonales({ formData, setFormData, onNext }) {
+export default function DatosPersonales({ formData, setFormData, onBack, onNext }) {
   const [errores, setErrores] = useState({});
   const [formValido, setFormValido] = useState(false);
   const [codigoTelefono, setCodigoTelefono] = useState("+598");
@@ -171,21 +171,31 @@ export default function DatosPersonales({ formData, setFormData, onNext }) {
           )}
         </div>
 
+        <div className="mt-4 flex justify-between">
+          <button
+            onClick={onBack}
+            className="bg-blue-600 hover:bg-blue-700 text-white rounded mt-4 py-2 px-4 font-semibold"
+          >
+            Atrás
+          </button>
 
-        <button
-          disabled={!formValido}
-          onClick={() => {
-            if (formValido) onNext(),
-              console.log(formData);
-            else toast.error("Por favor corregí los errores antes de continuar");
-          }}
-          className={`mt-4 px-4 py-2 rounded text-white font-semibold transition ${formValido
-            ? "bg-blue-600 hover:bg-blue-700"
-            : "bg-gray-400 cursor-not-allowed"
-            }`}
-        >
-          Siguiente
-        </button>
+          <button
+            disabled={!formValido}
+            onClick={() => {
+              if (formValido) onNext();
+              else toast.error("Por favor corregí los errores antes de continuar");
+            }}
+            className={`mt-4 px-4 py-2 rounded text-white font-semibold transition ${formValido
+              ? "bg-blue-600 hover:bg-blue-700"
+              : "bg-gray-400 cursor-not-allowed"
+              }`}
+          >
+            Siguiente
+          </button>
+        </div>
+
+
+
       </div>
     </div>
   );
