@@ -1,69 +1,146 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import { DayPicker } from 'react-day-picker';
+import 'react-day-picker/dist/style.css';
+import ReservaDetalle from "./ReservaDetalle";
+import { EyeIcon, PlusIcon } from "@heroicons/react/24/solid";
+import ModalCrearTarea from "./ModalCrearTarea";
 
-const mechanics = ["Alvaro", "Leandro", "Fernando", "Jose"];
-const hours = Array.from({ length: 10 }, (_, i) => 8 + i); // 8 a 17
+export default function CalendarioTareas() {
+  const [fechaSeleccionada, setFechaSeleccionada] = useState(new Date());
+  const [tareas, setTareas] = useState([]);
+  const [mecanicos, setMecanicos] = useState([]);
+  const [idReservaSeleccionada, setIdReservaSeleccionada] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalCrearVisible, setModalCrearVisible] = useState(false);
+  const [mecanicoSeleccionado, setMecanicoSeleccionado] = useState(null);
+  const [tareaSeleccionada, setTareaSeleccionada] = useState(null);
+  const [modalTareaVisible, setModalTareaVisible] = useState(false);
 
-// Datos de prueba para las tareas
-const tasks = [
-  { id: 1, mechanic: "Alvaro", start: "08:00", end: "12:30", desc: "Cambio de aceite", color: "bg-red-300" },
-  { id: 2, mechanic: "Alvaro", start: "13:00", end: "15:00", desc: "Revisión de frenos", color: "bg-red-400" },
-  { id: 3, mechanic: "Leandro", start: "08:00", end: "10:00", desc: "Alineación", color: "bg-green-300" },
-  { id: 4, mechanic: "Leandro", start: "10:00", end: "12:00", desc: "Balanceo", color: "bg-green-400" },
-  { id: 5, mechanic: "Fernando", start: "08:30", end: "12:00", desc: "Diagnóstico", color: "bg-orange-300" },
-  { id: 6, mechanic: "Fernando", start: "14:00", end: "16:00", desc: "Cambio de bujías", color: "bg-orange-400" },
-  { id: 7, mechanic: "Jose", start: "09:00", end: "12:00", desc: "Reparación eléctrica", color: "bg-purple-300" },
-  { id: 8, mechanic: "Jose", start: "13:00", end: "17:00", desc: "Cambio de batería", color: "bg-purple-400" },
-];
+  const handleVerTarea = (tarea) => {
+    setTareaSeleccionada(tarea);
+    setModalTareaVisible(true);
+  };
 
-// Convierte una hora a un número decimal (por ejemplo, "08:30" → 8.5)
-function timeToDecimal(time) {
-  const [hours, minutes] = time.split(":").map(Number);
-  return hours + minutes / 60;
-}
 
-export default function App() {
+
+  useEffect(() => {
+    fetch("http://localhost:8081/sgc/api/v1/mecanico")
+      .then(res => res.json())
+      .then(data => setMecanicos(data))
+      .catch(err => console.error("Error al cargar mecánicos:", err));
+  }, []);
+
+  useEffect(() => {
+    if (fechaSeleccionada) {
+      const fecha = fechaSeleccionada.toISOString().split("T")[0];
+      fetch(`http://localhost:8081/sgc/api/v1/tarea/fecha/${fecha}`)
+        .then(res => res.json())
+        .then(data => setTareas(data))
+        .catch(err => console.error("Error al cargar tareas:", err));
+    }
+  }, [fechaSeleccionada]);
+
+  const timeToDecimal = (timeStr) => {
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    return hours + minutes / 60;
+  };
+
+  const hours = Array.from({ length: 10 }, (_, i) => 8 + i); // 8 a 17
+
+
+
+  function ModalReservaDetalle({ idReserva, visible, onClose }) {
+    const { reserva, loading, error } = ReservaDetalle(idReserva, visible);
+
+    if (!visible) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded shadow-lg w-full max-w-lg">
+          <h2 className="text-xl font-semibold mb-4">Detalle de Reserva</h2>
+
+          {loading && <p>Cargando...</p>}
+          {error && <p className="text-red-600">Error: {error}</p>}
+
+          {reserva && (
+            <div className="space-y-2 text-sm">
+              <h3 className="font-bold">{reserva.cliente.nombreCliente} {reserva.cliente.apellidoCliente}</h3>
+              <p>Teléfono: {reserva.cliente.telefonoCliente}</p>
+              <p>Email: {reserva.cliente.emailCliente}</p>
+              <br></br>
+
+              <h3 className="font-bold mt-4">{reserva.vehiculo.modelo.marca.nombreMarca} {reserva.vehiculo.modelo.nombreModelo}</h3>
+
+              <p>Matrícula: {reserva.vehiculo.matriculaVehiculo}</p>
+              <p>Chasis: {reserva.vehiculo.nroChasisVehiculo}</p>
+              <p>Motor: {reserva.vehiculo.nroMotorVehiculo}</p>
+              <p>Cilindrada: {reserva.vehiculo.cilindradaVehiculo}</p>
+              <p>Año: {reserva.vehiculo.anoVehiculo}</p>
+            </div>
+          )}
+
+          <div className="mt-4 text-right">
+            <button onClick={onClose} className="text-sm text-blue-600 hover:underline">
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+
+
   return (
-    
-    <div className="p-4 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-center text-gray-700">Agenda Taller</h1>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Agenda del Taller</h1>
+      <div className="flex mb-4 space-row">
+        <DayPicker mode="single" selected={fechaSeleccionada} onSelect={setFechaSeleccionada} />
+      </div>
 
-      <div className="grid grid-cols-[80px_repeat(4,minmax(0,1fr))] border border-gray-300 rounded shadow overflow-hidden bg-white">
-        {/* Horas al costado */}
+      <div className="grid grid-cols-[80px_repeat(auto-fit,minmax(200px,1fr))] border border-gray-300 rounded shadow overflow-hidden bg-white">
         <div className="flex flex-col">
           {hours.map((hour) => (
-            <div key={hour} className="h-16 border-b border-gray-200 text-sm text-right pr-2 pt-4 text-gray-500">
+            <div key={hour} className="h-16 border-b text-right pr-2 pt-4 text-gray-500 text-sm">
               {hour}:00
             </div>
           ))}
         </div>
 
-        {/* Columnas de mecánicos */}
-        {mechanics.map((name) => {
-          const tasksForMechanic = tasks.filter((t) => t.mechanic === name);
-
+        {mecanicos.map(m => {
+          const tareasMecanico = tareas.filter(t => t.idMecanico === m.idMecanico);
           return (
-            <div key={name} className="border-l border-gray-200 relative">
-              {/* Nombre del mecánico */}
-              <div className="h-10 font-semibold text-center border-b border-gray-200 bg-gray-100 text-gray-700 flex items-center justify-center">
-                {name}
+            <div key={m.idMecanico} className="border-l relative">
+              <div className="h-10 font-semibold text-center border-b bg-gray-100 text-gray-700 flex items-center justify-center px-2">
+                {m.nombreMecanico}
+                <button
+                  onClick={() => { setMecanicoSeleccionado(m.idMecanico); setModalCrearVisible(true); }}
+                  className="bg-green-600 text-white p-2 rounded ml-2 hover:bg-green-700"
+                >
+                  <PlusIcon className="w-4 h-4" />
+                </button>
               </div>
-
-              {/* Espacio total de tareas */}
               <div className="relative" style={{ height: `${hours.length * 64}px` }}>
-                {tasksForMechanic.map((task) => {
-                  const startDecimal = timeToDecimal(task.start);
-                  const endDecimal = timeToDecimal(task.end);
-                  const top = (startDecimal - 8) * 64;
-                  const height = (endDecimal - startDecimal) * 64;
-
+                {tareasMecanico.map((t) => {
+                  const top = (timeToDecimal(t.horaIngresoTarea) - 8) * 64;
+                  const height = (timeToDecimal(t.horaFinTarea) - timeToDecimal(t.horaIngresoTarea)) * 64;
                   return (
                     <div
-                      key={task.id}
-                      className={`absolute left-2 right-2 ${task.color} rounded shadow-md text-white text-xs px-2 py-1 overflow-hidden whitespace-pre-line`}
-                      style={{ top: `${top}px`, height: `${height}px` }}
+                      key={t.idTarea}
+                      onClick={() => handleVerTarea(t)} // <-- click para abrir el modal
+                      className="absolute left-1 right-1 bg-blue-500 text-white text-xs rounded px-2 py-1 shadow-md border border-gray-700 cursor-pointer hover:brightness-110 transition"
+                      style={{ top, height }}
                     >
-                      {task.desc}
+                      {t.descripcionTarea || "Tarea"}
+                      <div className="text-[10px]">
+                        Estado: {t.nombreEstado} <br />
+                        Admin: {t.nombreAdmin} <br />
+                        {t.esReservaTarea && (
+                          <EyeIcon className="w-3 h-3 inline-block ml-1" />
+                        )}
+                      </div>
                     </div>
+
                   );
                 })}
               </div>
@@ -71,6 +148,75 @@ export default function App() {
           );
         })}
       </div>
+
+      <ModalReservaDetalle
+        idReserva={idReservaSeleccionada}
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+      />
+
+
+      <ModalCrearTarea
+        isOpen={modalCrearVisible}
+        onClose={() => setModalCrearVisible(false)}
+        onCrear={(nuevaTarea) => {
+          fetch("http://localhost:8081/sgc/api/v1/tarea", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(nuevaTarea)
+          })
+            .then(res => {
+              if (!res.ok) throw new Error("Error al crear tarea");
+              return res.json(); // ✅ Ahora esto no rompe porque backend devuelve JSON
+            })
+            .then(() => {
+              const fecha = fechaSeleccionada.toISOString().split("T")[0];
+              return fetch(`http://localhost:8081/sgc/api/v1/tarea/fecha/${fecha}`);
+            })
+            .then(res => res.json())
+            .then(data => {
+              setTareas(data);
+              setModalCrearVisible(false);
+            })
+            .catch(err => {
+              console.error("Error al crear tarea:", err);
+              alert("Hubo un error al crear la tarea.");
+            });
+        }}
+        fecha={fechaSeleccionada}
+        idMecanico={mecanicoSeleccionado}
+      />
+
+
+      {modalTareaVisible && tareaSeleccionada && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+          <div className="bg-white text-gray-800 p-6 rounded shadow-lg w-full max-w-md">
+            <div className="flex row gap-5 mb-4">
+              <h2 className="text-lg font-bold">Detalle de Tarea</h2> 
+              {tareaSeleccionada.horaIngresoTarea.slice(0, 5)} a {tareaSeleccionada.horaFinTarea.slice(0, 5)}
+            </div>
+            <p>{tareaSeleccionada.descripcionTarea || "No especificada"}</p>
+            
+            <p> {tareaSeleccionada.nombreEstado}</p>
+
+            {tareaSeleccionada.esReservaTarea && <p><strong>Reserva asociada:</strong> #{tareaSeleccionada.idReserva}</p>}
+
+            <div className="mt-4 text-right">
+              <button
+                onClick={() => setModalTareaVisible(false)}
+                className="text-sm text-red-600 hover:underline"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
+
     </div>
+
+
   );
 }

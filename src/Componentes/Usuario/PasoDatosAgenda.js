@@ -121,17 +121,19 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
 
     const handleSeleccionHorario = (horario) => {
         setMostrarHorarios(false);
-        console.log("Horario seleccionado:", horario);
 
-        setFormData(prev => ({
-            ...prev,
-            fechaSeleccionada: prev.fechaSeleccionada,
-            horaInicio: horario.inicio,
-            horaFin: horario.fin
-        }));
-
-        console.log(formData);
+        setFormData(prev => {
+            const nuevoFormData = {
+                ...prev,
+                horaInicio: horario.horaInicio,
+                horaFin: horario.horaFin,
+                IdMecanico: horario.idMecanico
+            };
+            console.log("Horario seleccionado y formData actualizado:", nuevoFormData);
+            return nuevoFormData;
+        });
     };
+
 
     useEffect(() => {
         if (formData.horaInicio && formData.fechaSeleccionada) {
@@ -198,7 +200,7 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
                 </ul>
             </div>
 
-            
+
 
             {/* Botón Ver Disponibilidad */}
             {DisponibilidadButtonVisible && (
@@ -206,18 +208,18 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
 
 
                     {/* Comentarios */}
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Comentarios o consultas adicionales
-                </label>
-                <textarea
-                    value={formData.comentario || ""}
-                    onChange={handleComentarioChange}
-                    rows={4}
-                    placeholder="Escriba aquí cualquier observación sobre la reserva..."
-                    className="w-full border border-gray-300 rounded-md p-3"
-                />
-            </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Comentarios o consultas adicionales
+                        </label>
+                        <textarea
+                            value={formData.comentario || ""}
+                            onChange={handleComentarioChange}
+                            rows={4}
+                            placeholder="Escriba aquí cualquier observación sobre la reserva..."
+                            className="w-full border border-gray-300 rounded-md p-3"
+                        />
+                    </div>
 
 
                     <button

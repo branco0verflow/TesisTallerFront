@@ -51,6 +51,12 @@ export default function Home() {
 
 
             <div>
+                <Link
+                            to="/AVisordeTarea"
+                            className="mt-6 inline-block border border-white text-blue-700 hover:bg-white hover:text-white-700 font-semibold py-3 px-6 rounded transition"
+                        >
+                            Admin Visor de Tarea
+                        </Link>
                 <LogosBar />
             </div>
 

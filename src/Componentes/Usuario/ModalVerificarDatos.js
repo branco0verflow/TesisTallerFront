@@ -46,7 +46,8 @@ export default function ModalVerificarDatos({ formData, onClose, onConfirm }) {
                 matriculaVehiculo: formData.NroMatricula.trim()
             },
             idsTipoTarea: formData.tareas.map(t => t.idTipoTarea),
-            idEstado: 1
+            idEstado: 1,
+            idMecanico: formData.IdMecanico
         };
 
 

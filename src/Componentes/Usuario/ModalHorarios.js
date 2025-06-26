@@ -15,8 +15,8 @@ export default function ModalHorarios({ horarios, onClose, onSeleccionHorario })
                                     onClick={() => onSeleccionHorario(h)}
                                     className="w-full bg-green-100 hover:bg-green-200 text-green-800 py-2 px-4 rounded flex items-center gap-2"
                                 >
-                                    <span className="text-green-900">Ingreso:</span> {h.inicio} →
-                                    <span className="text-green-900">Salida estimada:</span> {h.fin}
+                                    <span className="text-green-900">Ingreso:</span> {h.horaInicio.slice(0, 5)} →
+                                    <span className="text-green-900">Salida estimada:</span> {h.horaFin.slice(0, 5)}
                                 </button>
                             </li>
                         ))}

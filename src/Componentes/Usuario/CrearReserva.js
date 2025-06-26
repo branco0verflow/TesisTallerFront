@@ -31,6 +31,7 @@ export default function CrearReserva() {
         KilometrajeVehiculo: "",
         tareas: [],
         fechaSeleccionada: null,
+        IdMecanico: "",
         horaInicio: "",
         horaFin: "",
         comentario: ""
