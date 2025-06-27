@@ -16,6 +16,10 @@ export default function CalendarioTareas() {
   const [tareaSeleccionada, setTareaSeleccionada] = useState(null);
   const [modalTareaVisible, setModalTareaVisible] = useState(false);
 
+  const [mostrarDetalleReserva, setMostrarDetalleReserva] = useState(false);
+  const { reserva, loading, error } = ReservaDetalle(tareaSeleccionada?.idReserva, mostrarDetalleReserva);
+
+
   const handleVerTarea = (tarea) => {
     setTareaSeleccionada(tarea);
     setModalTareaVisible(true);
@@ -49,51 +53,12 @@ export default function CalendarioTareas() {
 
 
 
-  function ModalReservaDetalle({ idReserva, visible, onClose }) {
-    const { reserva, loading, error } = ReservaDetalle(idReserva, visible);
-
-    if (!visible) return null;
-
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white p-6 rounded shadow-lg w-full max-w-lg">
-          <h2 className="text-xl font-semibold mb-4">Detalle de Reserva</h2>
-
-          {loading && <p>Cargando...</p>}
-          {error && <p className="text-red-600">Error: {error}</p>}
-
-          {reserva && (
-            <div className="space-y-2 text-sm">
-              <h3 className="font-bold">{reserva.cliente.nombreCliente} {reserva.cliente.apellidoCliente}</h3>
-              <p>Teléfono: {reserva.cliente.telefonoCliente}</p>
-              <p>Email: {reserva.cliente.emailCliente}</p>
-              <br></br>
-
-              <h3 className="font-bold mt-4">{reserva.vehiculo.modelo.marca.nombreMarca} {reserva.vehiculo.modelo.nombreModelo}</h3>
-
-              <p>Matrícula: {reserva.vehiculo.matriculaVehiculo}</p>
-              <p>Chasis: {reserva.vehiculo.nroChasisVehiculo}</p>
-              <p>Motor: {reserva.vehiculo.nroMotorVehiculo}</p>
-              <p>Cilindrada: {reserva.vehiculo.cilindradaVehiculo}</p>
-              <p>Año: {reserva.vehiculo.anoVehiculo}</p>
-            </div>
-          )}
-
-          <div className="mt-4 text-right">
-            <button onClick={onClose} className="text-sm text-blue-600 hover:underline">
-              Cerrar
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
 
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Agenda del Taller</h1>
+
       <div className="flex mb-4 space-row">
         <DayPicker mode="single" selected={fechaSeleccionada} onSelect={setFechaSeleccionada} />
       </div>
@@ -136,7 +101,12 @@ export default function CalendarioTareas() {
                         Estado: {t.nombreEstado} <br />
                         Admin: {t.nombreAdmin} <br />
                         {t.esReservaTarea && (
-                          <EyeIcon className="w-3 h-3 inline-block ml-1" />
+
+                          <button onClick={(() => {
+                            <ModalReservaDetalle idReserva={t.idReserva} visible={(() => setModalVisible(true))} onClose={() => setModalVisible(false)} />
+                          })}>
+                            <EyeIcon className="w-3 h-3 inline-block ml-1" />
+                          </button>
                         )}
                       </div>
                     </div>
@@ -149,11 +119,6 @@ export default function CalendarioTareas() {
         })}
       </div>
 
-      <ModalReservaDetalle
-        idReserva={idReservaSeleccionada}
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-      />
 
 
       <ModalCrearTarea
@@ -192,18 +157,59 @@ export default function CalendarioTareas() {
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
           <div className="bg-white text-gray-800 p-6 rounded shadow-lg w-full max-w-md">
             <div className="flex row gap-5 mb-4">
-              <h2 className="text-lg font-bold">Detalle de Tarea</h2> 
+              <h2 className="text-lg font-bold">Detalle de Tarea</h2>
               {tareaSeleccionada.horaIngresoTarea.slice(0, 5)} a {tareaSeleccionada.horaFinTarea.slice(0, 5)}
             </div>
+
             <p>{tareaSeleccionada.descripcionTarea || "No especificada"}</p>
-            
-            <p> {tareaSeleccionada.nombreEstado}</p>
+            <p>{tareaSeleccionada.nombreEstado}</p>
 
-            {tareaSeleccionada.esReservaTarea && <p><strong>Reserva asociada:</strong> #{tareaSeleccionada.idReserva}</p>}
-
-            <div className="mt-4 text-right">
+            {tareaSeleccionada.esReservaTarea && !mostrarDetalleReserva && (
               <button
-                onClick={() => setModalTareaVisible(false)}
+                onClick={() => setMostrarDetalleReserva(true)}
+                className="text-blue-600 hover:underline text-sm flex items-center gap-1 mt-2"
+              >
+                <EyeIcon className="w-4 h-4" />
+                Ver detalles de la reserva
+              </button>
+            )}
+
+            {mostrarDetalleReserva && (
+              <div className="mt-4 bg-gray-100 p-4 rounded text-sm">
+                {loading && <p>Cargando detalles de la reserva...</p>}
+                {error && <p className="text-red-500">Error: {error}</p>}
+                {reserva && (
+                  <div className="space-y-2">
+                    <h3 className="font-bold">{reserva.cliente.nombreCliente} {reserva.cliente.apellidoCliente}</h3>
+                    <p>Teléfono: {reserva.cliente.telefonoCliente}</p>
+                    <p>Email: {reserva.cliente.emailCliente}</p>
+
+                    <h3 className="font-bold mt-4">{reserva.vehiculo.modelo.marca.nombreMarca} {reserva.vehiculo.modelo.nombreModelo}</h3>
+                    <p>Matrícula: {reserva.vehiculo.matriculaVehiculo}</p>
+                    <p>Chasis: {reserva.vehiculo.nroChasisVehiculo}</p>
+                    <p>Motor: {reserva.vehiculo.nroMotorVehiculo}</p>
+                    <p>Cilindrada: {reserva.vehiculo.cilindradaVehiculo}</p>
+                    <p>Año: {reserva.vehiculo.anoVehiculo}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="mt-4 text-right flex justify-between">
+              {mostrarDetalleReserva && (
+                <button
+                  onClick={() => setMostrarDetalleReserva(false)}
+                  className="text-sm text-gray-600 hover:underline"
+                >
+                  Ocultar reserva
+                </button>
+              )}
+
+              <button
+                onClick={() => {
+                  setMostrarDetalleReserva(false);
+                  setModalTareaVisible(false);
+                }}
                 className="text-sm text-red-600 hover:underline"
               >
                 Cerrar
@@ -212,6 +218,8 @@ export default function CalendarioTareas() {
           </div>
         </div>
       )}
+
+
 
 
 

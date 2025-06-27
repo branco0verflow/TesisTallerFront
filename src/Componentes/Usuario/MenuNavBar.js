@@ -9,7 +9,7 @@ export default function MenuNavBar() {
 
   const navLinks = [
     { name: "Inicio", path: "/" },
-    { name: "Sobre Nosotros", path: "/" },
+    { name: "Sobre Nosotros", path: "/sobreNosotros" },
   ];
 
   return (
@@ -26,7 +26,7 @@ export default function MenuNavBar() {
           </div>
 
           {/* Desktop links */}
-          <div className="hidden md:flex space-x-6">
+          <div className="flex space-x-6">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
