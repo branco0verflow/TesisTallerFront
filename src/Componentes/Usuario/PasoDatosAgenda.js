@@ -14,6 +14,20 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
     const [DisponibilidadButtonVisible, setDisponibilidadButtonVisible] = useState(false);
 
 
+    const fecha = new Date(`${formData.fechaSeleccionada}T12:00:00`);
+
+    const opciones = {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        timeZone: 'America/Montevideo'
+    };
+
+    const fechaFormateada = fecha.toLocaleDateString('es-ES', opciones);
+    const fechaCapitalizada = fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
+
+
     const tareasSeleccionadas = Array.isArray(formData?.tareas)
         ? formData.tareas
         : [];
@@ -247,6 +261,10 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
                 </div>
 
 
+            )}
+
+            { formData.fechaSeleccionada && (
+                <p className="bg-green-200 rounded p-4 mt-2 text-green-900 flex animate-fade-in"><strong className="text-green-700">Cita para el: </strong> {fechaCapitalizada}, ingresa a las {formData.horaInicio.slice(0, 5)}.</p>
             )}
 
             <div className="flex justify-end">

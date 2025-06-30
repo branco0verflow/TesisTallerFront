@@ -87,7 +87,7 @@ export default function ModalVerificarDatos({ formData, onClose, onConfirm }) {
 
         }
     };
-
+//s
 
 
     return (

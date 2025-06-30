@@ -41,7 +41,7 @@ export default function ModalCrearTarea({ isOpen, onClose, onCrear, fecha, idMec
                     onClick={onClose}
                     className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl font-bold"
                 >
-                    ×
+                    X
                 </button>
                 <h2 className="text-lg font-bold mb-4">Nueva tarea</h2>
 
@@ -92,3 +92,4 @@ export default function ModalCrearTarea({ isOpen, onClose, onCrear, fecha, idMec
         </div>
     );
 }
+
