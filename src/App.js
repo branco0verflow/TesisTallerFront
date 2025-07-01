@@ -7,11 +7,13 @@ import SobreNosotros from "./Componentes/SobreNosotros";
 import Terminos from "./Componentes/Terminos";
 import PoliticaPrivacidad from "./Componentes/PoliticaDePrivacidad";
 import Contacto from "./Componentes/Contacto";
+import ScrollToTop from "./Componentes/ScrollToTop";
 
 function App() {
   return (
     <Router>
       
+      <ScrollToTop /> 
 
       <Routes>
         <Route path="/" element={<UHome />}/>

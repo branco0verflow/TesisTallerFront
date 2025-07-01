@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Toaster } from 'react-hot-toast';
 
-export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanicos, setTareaModificada }) {
+export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanicos, setTareaModificada, estados }) {
     const [loading, setLoading] = useState(true);
     const [tarea, setTarea] = useState(null);
 
@@ -91,6 +91,13 @@ export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanico
         return hora?.slice(0, 5); // toma solo "HH:mm" de "HH:mm:ss"
     };
 
+    const formatearFecha = (fecha) => {
+        const f = new Date(fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'long' });
+        return f.charAt(0).toUpperCase() + f.slice(1);
+    };
+
+
+
 
     if (!isOpen) return null; // necesario
     if (loading) return <div className="p-4">Cargando tarea...</div>;
@@ -98,41 +105,67 @@ export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanico
     return (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
             <Toaster position="top-right" />
-            <div className="bg-white p-6 rounded shadow-md w-[400px]">
-                <h2 className="text-lg font-bold mb-4">Modificar Tarea</h2>
+            <div className="bg-white p-6 rounded shadow-md w-full max-w-2xl">
+                <div className="flex gap-4 mb-4 items-center justify-between">
+                    <h2 className="text-lg font-bold">Modificar Tarea</h2>
+                    <h3 className="flex text-sm text-gray-700">Creada el {formatearFecha(tarea.fechaCreadaTarea)} por <strong className="ml-1">{tarea.administrador.nombreAdmin}</strong></h3>
+                </div>
+
 
                 <label className="block mb-2">
                     Descripción:
-                    <input
+                    <textarea
                         name="descripcionTarea"
                         value={tarea.descripcionTarea || ""}
                         onChange={handleChange}
+                        rows={6}
                         className="w-full border px-2 py-1 mt-1 rounded"
                     />
                 </label>
 
-                <label className="block mb-2">
-                    Hora Ingreso:
-                    <input
-                        name="horaIngresoTarea"
-                        type="time"
-                        value={getHoraSinSegundos(tarea.horaIngresoTarea) || ""}
+                <div className="flex gap-4 mb-4">
+                    <label className="flex flex-col text-sm w-40">
+                        Hora Ingreso:
+                        <input
+                            name="horaIngresoTarea"
+                            type="time"
+                            value={getHoraSinSegundos(tarea.horaIngresoTarea) || ""}
+                            onChange={handleChange}
+                            className="border px-2 py-1 mt-1 rounded"
+                        />
+                    </label>
 
+                    <label className="flex flex-col text-sm w-40">
+                        Hora Fin:
+                        <input
+                            name="horaFinTarea"
+                            type="time"
+                            value={getHoraSinSegundos(tarea.horaFinTarea) || ""}
+                            onChange={handleChange}
+                            className="border px-2 py-1 mt-1 rounded"
+                        />
+                    </label>
+
+                    <label className="block mb-2">
+                    Estado:
+                    <select
+                        name="idEstado"
+                        value={tarea.idEstado || ""}
                         onChange={handleChange}
                         className="w-full border px-2 py-1 mt-1 rounded"
-                    />
+                    >
+                        <option value="">{tarea.estado.nombreEstado}</option>
+                        {estados.map((es) => (
+                            <option key={es.idEstado} value={es.idEstado}>
+                                {es.nombreEstado}
+                            </option>
+                        ))}
+                    </select>
                 </label>
+                </div>
 
-                <label className="block mb-2">
-                    Hora Fin:
-                    <input
-                        name="horaFinTarea"
-                        type="time"
-                        value={getHoraSinSegundos(tarea.horaFinTarea) || ""}
-                        onChange={handleChange}
-                        className="w-full border px-2 py-1 mt-1 rounded"
-                    />
-                </label>
+
+
 
                 <label className="block mb-2">
                     Mecánico:
@@ -142,7 +175,7 @@ export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanico
                         onChange={handleChange}
                         className="w-full border px-2 py-1 mt-1 rounded"
                     >
-                        <option value={tarea.idMecanico}>Seleccionar mecánico...</option>
+                        <option value="">{tarea.mecanico.nombreMecanico} {tarea.mecanico.apellidoMecanico}</option>
                         {mecanicos.map((m) => (
                             <option key={m.idMecanico} value={m.idMecanico}>
                                 {m.nombreMecanico} {m.apellidoMecanico}
@@ -150,6 +183,7 @@ export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanico
                         ))}
                     </select>
                 </label>
+
 
 
                 <div className="flex justify-end mt-4 space-x-2">
