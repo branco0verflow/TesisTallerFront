@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Toaster } from 'react-hot-toast';
+import { TrashIcon } from "@heroicons/react/24/solid";
 
 export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanicos, setTareaModificada, estados }) {
     const [loading, setLoading] = useState(true);
@@ -87,8 +88,36 @@ export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanico
             });
     };
 
+    const eliminarTarea = (idTarea) => {
+
+        fetch(`http://localhost:8081/sgc/api/v1/tarea/${idTarea}`, {
+            method: "DELETE",
+        })
+            .then(res => {
+                if (res.ok) {
+                    setTareaModificada(true);
+                    onClose();
+                } else {
+                    toast.error("No se pudo eliminar la tarea");
+                    console.log("idTarea:", idTarea);
+                }
+            })
+            .catch(err => {
+                toast.error("Error en el servidor");
+                console.error(err);
+            });
+    };
+
+    const confirmarYEliminar = (idTarea) => {
+        if (window.confirm("¿Estás seguro de que deseas eliminar esta tarea?")) {
+            eliminarTarea(idTarea);
+        }
+    };
+
+
+
     const getHoraSinSegundos = (hora) => {
-        return hora?.slice(0, 5); // toma solo "HH:mm" de "HH:mm:ss"
+        return hora?.slice(0, 5);
     };
 
     const formatearFecha = (fecha) => {
@@ -124,8 +153,8 @@ export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanico
                 </label>
 
                 <div className="flex gap-4 mb-4">
-                    <label className="flex flex-col text-sm w-40">
-                        Hora Ingreso:
+                    <label className="flex flex-col text-sm w-30">
+                        Ingreso
                         <input
                             name="horaIngresoTarea"
                             type="time"
@@ -135,8 +164,8 @@ export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanico
                         />
                     </label>
 
-                    <label className="flex flex-col text-sm w-40">
-                        Hora Fin:
+                    <label className="flex flex-col text-sm w-30">
+                        Fin
                         <input
                             name="horaFinTarea"
                             type="time"
@@ -146,22 +175,22 @@ export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanico
                         />
                     </label>
 
-                    <label className="block mb-2">
-                    Estado:
-                    <select
-                        name="idEstado"
-                        value={tarea.idEstado || ""}
-                        onChange={handleChange}
-                        className="w-full border px-2 py-1 mt-1 rounded"
-                    >
-                        <option value="">{tarea.estado.nombreEstado}</option>
-                        {estados.map((es) => (
-                            <option key={es.idEstado} value={es.idEstado}>
-                                {es.nombreEstado}
-                            </option>
-                        ))}
-                    </select>
-                </label>
+                    <label className="flex flex-col text-sm w-30">
+                        Estado
+                        <select
+                            name="idEstado"
+                            value={tarea.idEstado || ""}
+                            onChange={handleChange}
+                            className="border px-2 py-1 mt-1 rounded"
+                        >
+                            <option value="">{tarea.estado.nombreEstado}</option>
+                            {estados.map((es) => (
+                                <option key={es.idEstado} value={es.idEstado}>
+                                    {es.nombreEstado}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
                 </div>
 
 
@@ -185,8 +214,16 @@ export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanico
                 </label>
 
 
-
+<button
+                        onClick={() => confirmarYEliminar(idTarea)}
+                        className="p-3 rounded-full bg-red-300 hover:bg-red-500 text-white shadow transition"
+                        title="Eliminar tarea"
+                    >
+                        <TrashIcon className="w-5 h-5" />
+                    </button>
                 <div className="flex justify-end mt-4 space-x-2">
+                    
+
                     <button className="bg-gray-300 px-4 py-2 rounded" onClick={onClose}>Cancelar</button>
                     <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={modificarTarea}>Guardar</button>
                 </div>

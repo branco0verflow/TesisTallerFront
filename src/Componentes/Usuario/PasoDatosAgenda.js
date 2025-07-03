@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { XCircleIcon } from "@heroicons/react/20/solid";
 import ModalCalendario from "./ModalCalendario";
 import ModalHorarios from "./ModalHorarios";
+import { CalendarIcon } from "@heroicons/react/24/solid";
 
 export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
     const [tareasDisponibles, setTareasDisponibles] = useState([]);
@@ -238,10 +239,14 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
 
                     <button
                         onClick={consultarDisponibilidad}
-                        className="animate-fade-in bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold shadow"
+                        className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg transition-all duration-200 ease-in-out hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2"
                     >
-                        Ver disponibilidad
+                        <span className="flex items-center justify-center gap-2">
+                            <CalendarIcon className="w-5 h-5" />
+                            Ver disponibilidad
+                        </span>
                     </button>
+
 
                     {mostrarCalendario && (
                         <ModalCalendario
@@ -263,9 +268,15 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
 
             )}
 
-            { formData.fechaSeleccionada && (
-                <p className="bg-green-200 rounded p-4 mt-2 text-green-900 flex animate-fade-in"><strong className="text-green-700">Cita para el: </strong> {fechaCapitalizada}, ingresa a las {formData.horaInicio.slice(0, 5)}.</p>
+            {formData.fechaSeleccionada && (
+                <div className="animate-fade-in mt-4 w-full max-w-2xl mx-auto bg-green-100 border border-green-300 text-green-900 rounded-xl p-4 shadow-sm flex flex-col sm:flex-row sm:items-center gap-2">
+                    <strong className="text-green-800">Cita para el:</strong>
+                    <span>
+                        {fechaCapitalizada}, ingresa a las {formData.horaInicio.slice(0, 5)}.
+                    </span>
+                </div>
             )}
+
 
             <div className="flex justify-end">
                 <button

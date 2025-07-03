@@ -1,5 +1,6 @@
 import MenuNavBar from "./Usuario/MenuNavBar";
 import Footer from "./Usuario/Footer";
+import LogosBar from "./Usuario/LogosBar";
 
 export default function SobreNosotros() {
     return (
@@ -17,6 +18,7 @@ export default function SobreNosotros() {
           <p>
             Trabajamos con marcas reconocidas internacionalmente como Citröen, Peugeot, Renault, Nissan, Subaru, BYD y Riddara.
           </p>
+
 
           <p>
             Nuestro equipo está compuesto por profesionales apasionados por la mecánica automotriz, comprometidos con la excelencia y la atención personalizada.
@@ -44,6 +46,8 @@ export default function SobreNosotros() {
           </div>
         </section>
       </main>
+      
+          <LogosBar />
 
       <Footer />
     </div>);

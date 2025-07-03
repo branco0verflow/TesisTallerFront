@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PasoDatosPersonales from "./PasoDatosPersonales";
 import PasoDatosVehiculo from "./PasoDatosVehiculo";
 import PasoDatosAgenda from "./PasoDatosAgenda";
@@ -38,11 +38,16 @@ export default function CrearReserva() {
 
     });
 
+    useEffect(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    }, [pasoActual]);
+
+
 
     const handleNext = () => setPasoActual((prev) => prev + 1);
     const handleBack = () => setPasoActual((prev) => prev - 1);
 
-    const backgrounds = {1: fullScreen1, 2: fullScreen2, 3: fullScreen3 };
+    const backgrounds = { 1: fullScreen1, 2: fullScreen2, 3: fullScreen3 };
 
 
 
@@ -50,6 +55,7 @@ export default function CrearReserva() {
     return (
         <div>
             <MenuNavBar />
+
             <FullScreen background={backgrounds[pasoActual]}>
 
                 <div className="w-full px-4">
@@ -65,7 +71,7 @@ export default function CrearReserva() {
                     {pasoActual === 3 && (
                         <PasoDatosVehiculo formData={formData} setFormData={setFormData} onNext={handleNext} onBack={handleBack} />
                     )}
-                    
+
                 </div>
 
             </FullScreen>

@@ -5,8 +5,9 @@ import {
     ExclamationCircleIcon,
 } from "@heroicons/react/20/solid";
 import IngresoVision from "./IngresoVision";
-import escanearImg from "../../Images/ScanerMode.png";
+import escanearImg from "../../Images/ScanerModee.png";
 import ModalVerificarDatos from "./ModalVerificarDatos";
+import VideoLibreta from "../../Video/VideoLibreta.mp4";
 
 export default function PasoDatosVehiculo({
     formData = {
@@ -35,6 +36,9 @@ export default function PasoDatosVehiculo({
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
     const [showModal, setShowModal] = useState(false);
     const listaRef = useRef(null);
+    const [mostrarVideo, setMostrarVideo] = useState(false);
+    const videoRef = useRef(null);
+
 
 
 
@@ -187,16 +191,27 @@ export default function PasoDatosVehiculo({
                             <h2 className="text-2xl font-bold text-blue-800">Datos del vehículo</h2>
                             <p className="text-sm text-gray-600">Completá la información del vehículo.</p>
                         </div>
+
                         <button
                             onClick={() => setUsarVision(true)}
-                            className="group bg-white rounded-lg shadow-md hover:shadow-xl transition-transform transform hover:scale-105 active:scale-95 border border-gray-200 focus:outline-none"
+                            className="flex flex-col items-center justify-center  border-purple-300 hover:bg-purple-200 transition shadow-lg rounded-xl px-4 py-3 w-full max-w-[180px] mx-auto md:mx-0"
                         >
                             <img
                                 src={escanearImg}
-                                alt="Ingreso por escaneo"
-                                className="w-full object-contain h-28 transition-transform duration-300 group-hover:scale-105"
+                                alt="Escanear libreta"
+                                className="w-15 h-15 mb-1 object-contain"
                             />
-                            Escanear libreta
+                            <span className="text-purple-800 font-semibold text-sm">Escanear libreta</span>
+                        </button>
+                    </div>
+
+
+                    <div>
+                        <button
+                            onClick={() => setMostrarVideo(true)}
+                            className="text-blue-600 hover:underline text-sm flex items-center gap-1 mb-4"
+                        >
+                            ¿Como ingreso estos datos?
                         </button>
                     </div>
 
@@ -500,6 +515,61 @@ export default function PasoDatosVehiculo({
             ) : (
                 <IngresoVision onVolver={() => setUsarVision(false)} onNext={onNext} formData={formData} setFormData={setFormData} />
             )}
+
+
+            {mostrarVideo && (
+                <div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center">
+                    <div className="bg-white rounded-2xl shadow-lg max-w-2xl w-full mx-4 flex flex-col overflow-hidden animate-fade-in">
+                        {/* Encabezado */}
+                        <div className="p-6 border-b">
+                            <h2 className="text-lg font-bold text-gray-800 mb-1">1. Toma tu libreta del vehículo</h2>
+                            <p className="text-gray-700">2. Copia los datos que se indican</p>
+                        </div>
+
+                        {/* Video */}
+                        <div className="p-4">
+                            <video
+                                ref={(el) => {
+                                    if (el && el.paused && el.readyState >= 3) el.play();
+                                    videoRef.current = el;
+                                }}
+                                autoPlay
+                                muted
+                                playsInline
+                                onEnded={() => videoRef.current && videoRef.current.pause()}
+                                className="w-full rounded"
+                            >
+                                <source src={VideoLibreta} type="video/mp4" />
+                                Tu navegador no soporta video HTML5.
+                            </video>
+                        </div>
+
+                        {/* Botones */}
+                        <div className="flex justify-between items-center px-6 py-4 border-t flex-wrap gap-2">
+                            <button
+                                onClick={() => {
+                                    setMostrarVideo(false);
+                                    setUsarVision(true);
+                                }}
+                                className="bg-purple-700 text-white px-3 py-2 md:px-4 md:py-2 text-sm md:text-base rounded-lg font-semibold transition"
+                            >
+                                Quiero escanear los datos
+                            </button>
+                            <button
+                                onClick={() => setMostrarVideo(false)}
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition"
+                            >
+                                Entendido
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+
+
+
+
         </div>
     );
 }
