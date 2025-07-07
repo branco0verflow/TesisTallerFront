@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAdmin } from "../../AdminContext";
 
 export default function ModalCrearTarea({ isOpen, onClose, onCrear, fecha, idMecanico }) {
     const [form, setForm] = useState({
@@ -6,6 +7,8 @@ export default function ModalCrearTarea({ isOpen, onClose, onCrear, fecha, idMec
         horaFin: "09:00",
         descripcion: ""
     });
+
+    const { admin } = useAdmin(); 
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -20,7 +23,7 @@ export default function ModalCrearTarea({ isOpen, onClose, onCrear, fecha, idMec
             esReservaTarea: false,
             idMecanico,
             idEstado: 2,
-            idAdmin: 1
+            idAdmin: admin?.idAdmin
             
         };
         onCrear(nuevaTarea);

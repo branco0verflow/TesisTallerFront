@@ -92,12 +92,6 @@ export default function IngresoVision({ onNext, onVolver, formData, setFormData 
         <button onClick={onVolver} className="py-2 px-4 rounded text-white font-semibold bg-blue-600 hover:bg-blue-700">
           Volver al ingreso manual
         </button>
-        <button
-          onClick={onNext}
-          className="py-2 px-4 rounded text-white font-semibold bg-blue-600 hover:bg-blue-700"
-        >
-          Siguiente
-        </button>
       </div>
     </div>
   );

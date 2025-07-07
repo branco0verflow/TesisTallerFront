@@ -7,6 +7,7 @@ import ModalCrearTarea from "./ModalCrearTarea";
 import toast from "react-hot-toast";
 import { Toaster } from 'react-hot-toast';
 import ModalModificarTarea from "./ModalModificarTarea";
+import BotonLogout from "./BotonLogout";
 
 export default function CalendarioTareas() {
   const [fechaSeleccionada, setFechaSeleccionada] = useState(new Date());
@@ -117,6 +118,10 @@ export default function CalendarioTareas() {
             />
           </div>
         )}
+
+
+        <BotonLogout />
+
       </div>
 
 
