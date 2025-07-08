@@ -1,32 +1,39 @@
 import { useAdmin } from "../../AdminContext";
+import { useMecanico } from "../../MecanicoContext";
 import { useNavigate } from "react-router-dom";
+import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/solid";
 
-function BotonLogout() {
-  const { logout } = useAdmin();
+function BotonLogout({ tipoUsuario = "admin" }) {
   const navigate = useNavigate();
+  const { logout: logoutAdmin } = useAdmin();
+  const { logout: logoutMecanico } = useMecanico();
 
   const handleLogout = async () => {
     try {
-      // 👉 Opción para destruir la sesión en backend (opcional pero recomendable)
       await fetch("http://localhost:8081/sgc/api/v1/logout", {
         method: "POST",
         credentials: "include",
       });
     } catch (error) {
-      console.error("Error cerrando sesión en el backend", error);
+      console.error("Error cerrando sesión en backend", error);
     }
 
-    // 👉 Limpieza del contexto y redirección
-    logout(); // limpia el contexto y localStorage
-    navigate("/admin/login");
+    if (tipoUsuario === "admin") {
+      logoutAdmin();
+      navigate("/admin/login");
+    } else if (tipoUsuario === "mecanico") {
+      logoutMecanico();
+      navigate("/mecanico/login");
+    }
   };
 
   return (
     <button
       onClick={handleLogout}
-      className="text-sm text-red-600 hover:underline mt-4"
+      className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-full shadow hover:bg-red-100 hover:text-red-700 transition-colors duration-200"
     >
-      Cerrar sesión
+      <ArrowRightOnRectangleIcon className="h-5 w-5" />
+      <span className="text-sm font-medium">Cerrar sesión</span>
     </button>
   );
 }

@@ -60,7 +60,7 @@ function LoginAdmin() {
       <MenuNavBar />
       <div className="p-5 max-w-sm mx-auto mt-10">
 
-        <div className="flex justify-center h-20">
+        <div className="animate-fade-in flex justify-center h-20">
           <img src={logoLogin} alt="Logo de la empresa" className="h-16 w-auto object-contain" />
         </div>
 
@@ -71,7 +71,7 @@ function LoginAdmin() {
             value={emailAdmin}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Correo electrónico"
-            className="w-full mb-2 p-2 border rounded"
+            className="animate-fade-in w-full mb-2 p-2 border rounded"
             required
           />
           <input
@@ -79,16 +79,19 @@ function LoginAdmin() {
             value={passwordAdmin}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Contraseña"
-            className="w-full mb-4 p-2 border rounded"
+            className="animate-fade-in w-full mb-4 p-2 border rounded"
             required
           />
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
+            className="animate-fade-in bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
           >
             Iniciar sesión
           </button>
         </form>
+        <div className="animate-fade-in flex justify-center items-center mt-5 mb-3">
+          <button className="text-blue-900" onClick={() => navigate("/mecanico/login")}>¿Eres mecánico?</button>
+        </div>
       </div>
     </>
 

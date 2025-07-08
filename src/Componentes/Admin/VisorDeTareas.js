@@ -120,7 +120,8 @@ export default function CalendarioTareas() {
         )}
 
 
-        <BotonLogout />
+        <BotonLogout tipoUsuario="admin" />
+
 
       </div>
 
