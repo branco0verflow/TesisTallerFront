@@ -13,15 +13,17 @@ import RutaProtegida from "./Componentes/Admin/RutaProtegidaAdmin";
 import RutaProtegidaMecanico from "./Componentes/Mecanico/RutaProtegidaMecanico";
 import VisorTareasMecanico from "./Componentes/Mecanico/VisorTareasMecanico";
 import LoginMecanico from "./Componentes/Mecanico/LoginMecanico";
+import Seguimiento from "./Componentes/Usuario/Seguimientos";
+import CrearReservaSeguimiento from "./Componentes/Usuario/CrearReservaSeguimiento";
+
 
 function App() {
   return (
     <Router>
       <ScrollToTop />
-
+      
       <Routes>
-        <Route path="/admin/login" element={<LoginAdmin />} />
-        <Route path="/mecanico/login" element={<LoginMecanico />} />
+        {/* Rutas públicas */}
         <Route path="/" element={<UHome />} />
         <Route path="/crearReserva" element={<CrearReserva />} />
         <Route path="/sobreNosotros" element={<SobreNosotros />} />
@@ -29,6 +31,14 @@ function App() {
         <Route path="/contacto" element={<Contacto />} />
         <Route path="/politicaDePrivacidad" element={<PoliticaPrivacidad />} />
 
+        {/* Login */}
+        <Route path="/admin/login" element={<LoginAdmin />} />
+        <Route path="/mecanico/login" element={<LoginMecanico />} />
+ 
+        <Route path="/seguimiento" element={ <Seguimiento /> } />
+        <Route path="/seguimiento/crear-reserva" element={<CrearReservaSeguimiento />} />
+
+        {/* Rutas protegidas */}
         <Route
           path="/AVisordeTarea"
           element={
@@ -37,7 +47,6 @@ function App() {
             </RutaProtegida>
           }
         />
-
         <Route
           path="/mecanico/tareas"
           element={
@@ -47,6 +56,7 @@ function App() {
           }
         />
 
+        {/* Redirección 404 */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>

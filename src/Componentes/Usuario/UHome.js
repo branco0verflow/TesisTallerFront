@@ -48,10 +48,16 @@ export default function Home() {
                 </div>
             </div>
 
-
+            <LogosBar />
 
             <div>
-                <LogosBar />
+
+                <Link
+                    to="/seguimiento"
+                    className="mt-6 inline-block border border-white text-white hover:bg-white hover:text-blue-700 font-semibold py-3 px-6 rounded transition"
+                >
+                    Seguimientos
+                </Link>
             </div>
 
 

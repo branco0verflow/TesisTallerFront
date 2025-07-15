@@ -77,7 +77,7 @@ export default function ModalVerificarDatos({ formData, onClose, onConfirm }) {
 
             } else {
                 toast.success("Reserva creada con éxito");
-                setTimeout(() => navigate("/"), 1000);
+                setTimeout(() => navigate("/"), 2000);
             }
 
         } catch (error) {
