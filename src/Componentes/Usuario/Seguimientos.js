@@ -123,6 +123,7 @@ export default function Seguimientos() {
       if (response.ok) {
         alert("Reserva cancelada correctamente.");
         setReservas(reservas.filter(r => r.idReserva !== idReserva));
+        handleBuscar();
       } else {
         alert("Ocurrió un error al cancelar la reserva.");
       }
@@ -136,15 +137,15 @@ export default function Seguimientos() {
     
   }, []);
 
-  /* ───────────────────────────────────────── RENDER ───────────────────────────────────────── */
+  
   return (
     <>
       <MenuNavBar />
 
       <main className="px-4 py-8 max-w-4xl mx-auto">
-        {/* -------------- Formulario de búsqueda -------------- */}
+        
         <section className="bg-white/60 backdrop-blur rounded-xl shadow-lg p-6 mb-8">
-          <h1 className="flex items-center gap-2 text-2xl font-bold text-blue-800 mb-4">
+          <h1 className="flex items-center gap-2 text-2xl font-bold text-blue-900 mb-4">
             <MagnifyingGlassIcon className="w-7 h-7" />
             Seguimiento de Reservas
           </h1>
@@ -177,7 +178,7 @@ export default function Seguimientos() {
           {error   && <p className="mt-3 text-sm text-red-600">{error}</p>}
         </section>
 
-        {/* -------------- Bienvenida al cliente -------------- */}
+        
         {cliente && (
           <section className="mb-6">
             <div className="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl p-4 shadow">
@@ -189,7 +190,7 @@ export default function Seguimientos() {
           </section>
         )}
 
-        {/* -------------- Listado de vehículos -------------- */}
+        
         {vehiculos.length > 0 && (
           <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {vehiculos.map((v) => {
@@ -200,7 +201,7 @@ export default function Seguimientos() {
                   key={v.idVehiculo}
                   className="flex flex-col justify-between bg-white shadow-md rounded-xl p-5 border hover:shadow-lg transition"
                 >
-                  {/* Encabezado vehículo */}
+                  
                   <header className="mb-3">
                     <h3 className="text-lg font-medium text-gray-800">
                       {v.marca} {v.modelo}
@@ -208,7 +209,7 @@ export default function Seguimientos() {
                     <p className="text-sm text-gray-500">Matrícula: {v.matricula}</p>
                   </header>
 
-                  {/* Acciones */}
+                  
                   <div className="mt-auto space-y-2">
                     <button
                       onClick={() => obtenerReservas(v.idVehiculo)}
@@ -239,7 +240,7 @@ export default function Seguimientos() {
           </section>
         )}
 
-        {/* -------------- Modal de reservas -------------- */}
+        
         {mostrar && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
             <div className="relative w-full max-w-2xl h-[80vh] bg-white rounded-2xl shadow-2xl p-6 flex flex-col">

@@ -14,7 +14,6 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
 
     const [cliente, setCliente] = useState(null);
     const [vehiculo, setVehiculo] = useState(null);
-    const [telefono, setTelefono] = useState("");
     const [kilometraje, setKilometraje] = useState("");
     const [loading, setLoading] = useState(false);
     const [tareasDisponibles, setTareasDisponibles] = useState([]);
@@ -24,8 +23,13 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
     const [mostrarHorarios, setMostrarHorarios] = useState(false);
     const [horarios, setHorarios] = useState([]);
     const [reservas, setReservas] = useState([]);
-    const [tieneReservaFutura, setTieneReservaFutura] = useState(false);
     const navigate = useNavigate();
+    const [DisponibilidadButtonVisible, setDisponibilidadButtonVisible] = useState(false);
+    const [formValido, setFormValido] = useState(false);
+    const [kilometrajeGrabado, setKilometrajeGrabado] = useState("");
+    const [editandoTel, setEditandoTel] = useState(false);
+    const [telefono, setTelefono] = useState("");
+    const [telefonoEditado, setTelefonoEditado] = useState("");
 
     const [nuevaReserva, setNuevaReserva] = useState({
         fechaSeleccionada: "",
@@ -36,6 +40,22 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
         tareas: [],
         IdMecanico: "",
     });
+
+    useEffect(() => {
+        if (Array.isArray(nuevaReserva.tareas) && nuevaReserva.tareas.length > 0) {
+            setDisponibilidadButtonVisible(true);
+        } else {
+            setDisponibilidadButtonVisible(false);
+        }
+    }, [nuevaReserva.tareas]);
+
+    useEffect(() => {
+        if (nuevaReserva.horaInicio && nuevaReserva.fechaSeleccionada) {
+            setFormValido(true);
+        } else {
+            setFormValido(false);
+        }
+    }, [nuevaReserva.horaInicio, nuevaReserva.fechaSeleccionada]);
 
     useEffect(() => {
         fetch("http://localhost:8081/sgc/api/v1/tipotarea")
@@ -69,6 +89,7 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
             .then(data => {
                 setVehiculo(data);
                 setKilometraje(data.kilometrajeVehiculo);
+                setKilometrajeGrabado(data.kilometrajeVehiculo);
             })
             .catch(() => toast.error("Error al buscar vehículo"));
     }, [idVehiculo]);
@@ -152,7 +173,7 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
     };
 
     const handleConfirmarReserva = () => {
-        if (!telefono || !kilometraje) {
+        if (!telefono || kilometraje <= kilometrajeGrabado) {
             toast.error("Debe ingresar el teléfono y el kilometraje actualizado");
             return;
         }
@@ -202,7 +223,7 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
                 onReservaCreada?.(data);
                 toast.success("Reserva creada exitosamente");
                 setTimeout(() => navigate("/seguimiento"), 2000);
-                
+
             })
             .catch(err => {
                 console.error(err);
@@ -211,127 +232,208 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
             .finally(() => setLoading(false));
     };
 
+    const maskPhone = (tel) => {
+        return tel.replace(/^(\+\d{5})\d+(\d{3})$/, "$1***$2");
+    };
+
+
+
     return (
         <>
             <MenuNavBar />
-            
-                <Toaster position="top-right" />
-                <div className="max-w-xl mx-auto space-y-6 p-4">
-                    <h2 className="text-xl font-semibold text-center">Crear nueva reserva</h2>
+            <Toaster position="top-right" />
 
+            {/* — Contenedor — */}
+            <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+                {/* Encabezado */}
+                <header className="flex items-center justify-between">
+                    <h2 className="text-2xl font-bold text-blue-800 text-center w-full sm:w-auto">
+                        Crear nueva reserva
+                    </h2>
                     <button
                         onClick={() => navigate("/seguimiento")}
-                        className="text-sm text-blue-600 hover:underline"
+                        className="text-sm text-blue-600 hover:underline whitespace-nowrap"
                     >
                         ← Volver
                     </button>
+                </header>
 
-
+                {/* — Formulario — */}
+                <div className="bg-white/70 backdrop-blur rounded-2xl shadow-lg ring-1 ring-gray-200 p-6 space-y-6">
+                    {/* Teléfono */}
                     {cliente && (
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Teléfono de contacto</label>
-                            <input
-                                type="tel"
-                                value={telefono}
-                                onChange={(e) => setTelefono(e.target.value)}
-                                className="mt-1 block w-full border border-gray-300 rounded px-3 py-2"
-                            />
+                        <div className="space-y-1">
+                            <label className="block text-sm font-medium text-gray-700">
+                                ¿Este sigue siendo tu Nro. de teléfono?
+                            </label>
+
+                            {!editandoTel ? (
+                                <div className="flex items-center gap-3">
+                                    <span className="px-3 py-2 rounded-md border border-gray-300 bg-gray-50 flex-1">
+                                        {maskPhone(telefono)}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setEditandoTel(true);
+                                            setTelefonoEditado(""); // ← vaciar el input al editar
+                                        }}
+                                        className="text-blue-600 text-sm hover:underline"
+                                    >
+                                        Editar
+                                    </button>
+                                </div>
+                            ) : (
+                                <input
+                                    type="tel"
+                                    placeholder="Ingresá un nuevo teléfono"
+                                    value={telefonoEditado}
+                                    onChange={(e) => setTelefonoEditado(e.target.value)}
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                                    onBlur={() => {
+                                        if (telefonoEditado.trim()) {
+                                            setTelefono(telefonoEditado);
+                                        }
+                                        setEditandoTel(false);
+                                    }}
+                                />
+                            )}
                         </div>
                     )}
 
+
+                    {/* Kilometraje */}
                     {vehiculo && (
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Kilometraje actual</label>
+                        <div className="space-y-1">
+                            <p className="text-xs text-purple-700">
+                                Último registro: <span className="font-semibold">{kilometrajeGrabado}</span> km
+                            </p>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Kilometraje actual
+                            </label>
                             <input
                                 type="number"
                                 value={kilometraje}
                                 onChange={(e) => setKilometraje(e.target.value)}
-                                className="mt-1 block w-full border border-gray-300 rounded px-3 py-2"
+                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                             />
                         </div>
                     )}
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Seleccionar tareas</label>
-                        <div className="flex gap-2">
+                    {/* Tareas */}
+                    <div className="space-y-3">
+                        <label className="block text-sm font-medium text-gray-700">
+                            Seleccionar tareas
+                        </label>
+
+                        <div className="flex flex-col sm:flex-row gap-3">
                             <select
                                 value={tareaSeleccionada}
                                 onChange={(e) => setTareaSeleccionada(e.target.value)}
-                                className="w-full border border-gray-300 rounded-md p-2"
+                                className="flex-1 border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
                             >
                                 <option value="">Motivos de cita</option>
-                                {tareasDisponibles.map(tarea => (
-                                    <option key={tarea.idTipoTarea} value={tarea.nombreTipoTarea}>{tarea.nombreTipoTarea}</option>
+                                {tareasDisponibles.map((t) => (
+                                    <option key={t.idTipoTarea} value={t.nombreTipoTarea}>
+                                        {t.nombreTipoTarea}
+                                    </option>
                                 ))}
                             </select>
+
                             <button
                                 type="button"
                                 onClick={agregarTarea}
-                                className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white"
+                                className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
                             >
                                 Agregar
                             </button>
                         </div>
-                        <ul className="flex flex-wrap gap-2 mt-4">
-                            {nuevaReserva.tareas.map(t => (
-                                <li key={t.idTipoTarea} className="bg-gray-100 border rounded-full px-3 py-1 flex items-center">
+
+                        {/* Chips tareas seleccionadas */}
+                        <ul className="flex flex-wrap gap-2">
+                            {nuevaReserva.tareas.map((t) => (
+                                <li
+                                    key={t.idTipoTarea}
+                                    className="flex items-center gap-2 bg-gray-100 text-sm border rounded-full px-3 py-1"
+                                >
                                     {t.nombreTipoTarea}
-                                    <button onClick={() => quitarTarea(t.idTipoTarea)} className="ml-2 text-red-500 hover:text-red-700">X</button>
+                                    <button
+                                        onClick={() => quitarTarea(t.idTipoTarea)}
+                                        className="text-red-500 hover:text-red-700"
+                                    >
+                                        ×
+                                    </button>
                                 </li>
                             ))}
                         </ul>
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Comentarios</label>
-                        <textarea
-                            value={nuevaReserva.comentario || ""}
-                            onChange={handleComentarioChange}
-                            rows={3}
-                            className="w-full border border-gray-300 rounded-md p-2"
-                        />
-                    </div>
+                    {/* — Comentarios + Disponibilidad — */}
+                    {DisponibilidadButtonVisible && (
+                        <>
+                            <div className="space-y-1">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Comentarios o consultas adicionales
+                                </label>
+                                <textarea
+                                    value={nuevaReserva.comentario || ""}
+                                    onChange={handleComentarioChange}
+                                    rows={3}
+                                    className="w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                            </div>
 
-                    <button
-                        onClick={consultarDisponibilidad}
-                        className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl"
-                    >
-                        Ver disponibilidad
-                    </button>
-
-                    {mostrarCalendario && (
-                        <ModalCalendario
-                            diasDisponibles={diasDisponibles}
-                            onClose={() => setMostrarCalendario(false)}
-                            onDiaSeleccionado={handleSeleccionDia}
-                        />
+                            <button
+                                onClick={consultarDisponibilidad}
+                                className="w-full py-3 rounded-xl bg-green-700 text-white font-semibold hover:bg-green-800 transition"
+                            >
+                                Ver disponibilidad
+                            </button>
+                        </>
                     )}
 
-                    {mostrarHorarios && (
-                        <ModalHorarios
-                            horarios={horarios}
-                            onClose={() => setMostrarHorarios(false)}
-                            onSeleccionHorario={handleSeleccionHorario}
-                        />
-                    )}
-
-                    <button
-                        onClick={handleConfirmarReserva}
-                        disabled={loading || !telefono || !kilometraje || tieneReservaFutura}
-                        className={`w-full py-2 px-4 rounded text-white font-semibold ${loading || tieneReservaFutura ? "bg-gray-500 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
-                            }`}
-                    >
-                        {tieneReservaFutura ? "Ya hay una reserva activa" : loading ? "Confirmando..." : "Confirmar Reserva"}
-                    </button>
-
+                    {/* — Resumen fecha/horario — */}
                     {nuevaReserva.fechaSeleccionada && nuevaReserva.horaInicio && (
-                        <div className="mt-4 text-center text-green-700">
-                            <p><strong>Fecha:</strong> {nuevaReserva.fechaSeleccionada}</p>
-                            <p><strong>Horario:</strong> {nuevaReserva.horaInicio} a {nuevaReserva.horaFin}</p>
+                        <div className="text-center text-green-700 space-y-1">
+                            <p>
+                                <strong>Fecha:</strong> {nuevaReserva.fechaSeleccionada}
+                            </p>
+                            <p>
+                                <strong>Horario:</strong>{" "}
+                                {nuevaReserva.horaInicio.slice(0, 5)} – {nuevaReserva.horaFin.slice(0, 5)}
+                            </p>
                         </div>
                     )}
+
+                    {/* — Confirmar — */}
+                    {formValido && (
+                        <button
+                            onClick={handleConfirmarReserva}
+                            className="w-full py-3 rounded-xl bg-green-700 text-white font-semibold hover:bg-green-800 transition"
+                        >
+                            Confirmar reserva
+                        </button>
+                    )}
                 </div>
-            
+            </section>
+
+            {/* — Modales — */}
+            {mostrarCalendario && (
+                <ModalCalendario
+                    diasDisponibles={diasDisponibles}
+                    onClose={() => setMostrarCalendario(false)}
+                    onDiaSeleccionado={handleSeleccionDia}
+                />
+            )}
+
+            {mostrarHorarios && (
+                <ModalHorarios
+                    horarios={horarios}
+                    onClose={() => setMostrarHorarios(false)}
+                    onSeleccionHorario={handleSeleccionHorario}
+                />
+            )}
         </>
+
     );
 }
