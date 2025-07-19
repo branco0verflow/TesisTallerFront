@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { Toaster } from 'react-hot-toast';
 import ModalModificarTarea from "./ModalModificarTarea";
 import BotonLogout from "./BotonLogout";
+import { useNavigate } from 'react-router-dom';
 
 export default function CalendarioTareas() {
   const [fechaSeleccionada, setFechaSeleccionada] = useState(new Date());
@@ -23,11 +24,27 @@ export default function CalendarioTareas() {
   const [modalModificar, setModalModificar] = useState(false);
   const [tareaModificada, setTareaModificada] = useState(false);
   const [estados, setEstados] = useState([]);
-
   const [mostrarDetalleReserva, setMostrarDetalleReserva] = useState(false);
   const { reserva, loading, error } = ReservaDetalle(tareaSeleccionada?.idReserva, mostrarDetalleReserva);
+  const navigate = useNavigate();
+  const [minutos, setMinutos] = useState('');
+  const [disponibilidad, setDisponibilidad] = useState([]);
+  const [mostrarModal, setMostrarModal] = useState(false);
 
+  const consultarProximaDisponibilidad = () => {
+    if (!minutos || isNaN(minutos)) return;
 
+    fetch(`http://localhost:8081/sgc/api/v1/disponibilidad/proxima-disponibilidad?minutosRequeridos=${minutos}&limiteDias=20`)
+      .then(res => res.json())
+      .then(data => {
+        setDisponibilidad(data);
+        setMostrarModal(true);
+      })
+      .catch(err => {
+        console.error("Error al consultar próxima disponibilidad:", err);
+        alert("Error al consultar disponibilidad.");
+      });
+  };
 
   const toggleCalendario = () => {
     setCalendarioVisible(prev => !prev);
@@ -68,6 +85,10 @@ export default function CalendarioTareas() {
       .catch(err => console.error("Error al cargar estados:", err));
   }, []);
 
+  const toAdmin = () => {
+    navigate('/ListaAdmin');
+  }
+
   useEffect(() => {
     if (fechaSeleccionada) {
       const fecha = fechaSeleccionada.toISOString().split("T")[0];
@@ -107,6 +128,13 @@ export default function CalendarioTareas() {
           <CalendarIcon className="h-7 w-7" />
         </button>
 
+        <button
+          onClick={() => toAdmin()}
+          className="rounded-full p-5 bg-blue-600 hover:bg-blue-700  text-white shadow-md shadow-gray-400 mr-2"
+          title={calendarioVisible ? "Ocultar calendario" : "Mostrar calendario"}
+        >
+          <CalendarIcon className="h-7 w-7" />
+        </button>
 
 
         {calendarioVisible && (
@@ -120,11 +148,60 @@ export default function CalendarioTareas() {
         )}
 
 
-        <BotonLogout tipoUsuario="admin" />
+        <div className="flex items-center gap-2">
+          <label className="text-gray-700 font-medium">Minutos requeridos:</label>
+          <input
+            type="number"
+            value={minutos}
+            onChange={e => setMinutos(e.target.value)}
+            placeholder="Ej: 120"
+            className="w-24 px-3 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+          <button
+            onClick={consultarProximaDisponibilidad}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md shadow-md transition-all"
+          >
+            Consultar disponibilidad
+          </button>
+        </div>
 
+        <BotonLogout tipoUsuario="admin" />
 
       </div>
 
+
+      {mostrarModal && (
+        <>
+          {/* Overlay oscuro */}
+          <div className="fixed inset-0 bg-black bg-opacity-40 z-40" onClick={() => setMostrarModal(false)} />
+
+          {/* Modal */}
+          <div className="fixed z-50 top-1/2 left-1/2 w-full max-w-md transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-lg p-6">
+            <h2 className="text-xl font-semibold mb-4 text-center text-gray-800">Próxima disponibilidad por mecánico</h2>
+            <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2">
+              {disponibilidad.length > 0 ? (
+                disponibilidad.map((d, idx) => (
+                  <div key={idx} className="border border-gray-200 rounded-lg p-3 bg-gray-50 shadow-sm">
+                    <p className="text-gray-800 font-semibold">{d.nombreMecanico}</p>
+                    <p className="text-gray-600">📅 {d.fecha}</p>
+                    <p className="text-gray-600">🕒 {d.horaInicio.slice(0, 5)} - {d.horaFin.slice(0, 5)}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-center text-gray-500">No hay disponibilidad.</p>
+              )}
+            </div>
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={() => setMostrarModal(false)}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-all"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </>
+      )}
 
 
 
@@ -136,14 +213,14 @@ export default function CalendarioTareas() {
         }}
       >
 
-        
+
         <div className="row-start-1 col-start-1"></div> {/* celda vacía sobre la columna de horas */}
 
         {mecanicos.map((m, idx) => (
           <div
             key={`head-${m.idMecanico}`}
             className="row-start-1"
-            style={{ gridColumnStart: idx + 2 }}      
+            style={{ gridColumnStart: idx + 2 }}
           >
             <div className="h-full flex items-center justify-center bg-gray-100 border-l border-b text-gray-700 font-semibold px-2">
               {m.nombreMecanico}

@@ -13,7 +13,7 @@ export default function LogosBar() {
   ];
 
   return (
-    <div className="overflow-hidden py-10">
+    <div className="overflow-hidden py-1">
       <div className="relative w-full">
         <div className="animate-marquee flex gap-8 whitespace-nowrap">
           {logos.map((src, i) => (

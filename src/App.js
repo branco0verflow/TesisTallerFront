@@ -15,13 +15,17 @@ import VisorTareasMecanico from "./Componentes/Mecanico/VisorTareasMecanico";
 import LoginMecanico from "./Componentes/Mecanico/LoginMecanico";
 import Seguimiento from "./Componentes/Usuario/Seguimientos";
 import CrearReservaSeguimiento from "./Componentes/Usuario/CrearReservaSeguimiento";
-
+import ListaMecanicos from "./Componentes/Admin/ListaMecanicos";
+import ListaAdmin from "./Componentes/Admin/ListaAdmin";
+import ListaMarcas from "./Componentes/Admin/ListaMarcas";
+import ListaModelos from "./Componentes/Admin/ListaModelos";
+import ListaTipoTarea from "./Componentes/Admin/ListaTipoTarea";
 
 function App() {
   return (
     <Router>
       <ScrollToTop />
-      
+
       <Routes>
         {/* Rutas públicas */}
         <Route path="/" element={<UHome />} />
@@ -34,8 +38,8 @@ function App() {
         {/* Login */}
         <Route path="/admin/login" element={<LoginAdmin />} />
         <Route path="/mecanico/login" element={<LoginMecanico />} />
- 
-        <Route path="/seguimiento" element={ <Seguimiento /> } />
+
+        <Route path="/seguimiento" element={<Seguimiento />} />
         <Route path="/seguimiento/crear-reserva" element={<CrearReservaSeguimiento />} />
 
         {/* Rutas protegidas */}
@@ -44,6 +48,50 @@ function App() {
           element={
             <RutaProtegida>
               <VisorDeTareas />
+            </RutaProtegida>
+          }
+        />
+        <Route
+          path="/ListaAdmin"
+          element={
+            <RutaProtegida>
+              <ListaAdmin />
+            </RutaProtegida>
+          }
+        />
+
+        <Route
+          path="/ListaMarcas"
+          element={
+            <RutaProtegida>
+              <ListaMarcas />
+            </RutaProtegida>
+          }
+        />
+
+        <Route
+          path="/ListaModelos"
+          element={
+            <RutaProtegida>
+              <ListaModelos />
+            </RutaProtegida>
+          }
+        />
+
+        <Route
+          path="/ListaTipoTarea"
+          element={
+            <RutaProtegida>
+              <ListaTipoTarea />
+            </RutaProtegida>
+          }
+        />
+
+        <Route
+          path="/ListaMecanicos"
+          element={
+            <RutaProtegida>
+              <ListaMecanicos />
             </RutaProtegida>
           }
         />

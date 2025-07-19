@@ -5,6 +5,7 @@ import LogosBar from "./LogosBar";
 import Footer from "./Footer";
 import MigasDePan from "./MigasDePan";
 import VideoPrincipal from "../../Video/videoPrincipal.mp4";
+import bgSeguimiento from '../../Images/HomeSeguimiento.png';
 
 export default function Home() {
     return (
@@ -30,10 +31,10 @@ export default function Home() {
 
                 {/* 🧾 Contenido encima del video */}
                 <div className="relative z-20 flex flex-col justify-center items-center h-full px-6 text-center text-white">
-                    <h1 className="text-4xl font-extrabold font-sans">
+                    <h1 className="animate-fade-in-up text-4xl font-extrabold font-sans">
                         Solicitá tu servicio mecánico en 3 pasos
                     </h1>
-                    <p className="mt-4 max-w-xl text-lg text-gray-200">
+                    <p className="animate-fade-in-up mt-4 max-w-xl text-lg text-gray-200">
                         Elegí el servicio, seleccioná el horario y recibí confirmación sin demoras.
                     </p>
                     <Link
@@ -42,7 +43,7 @@ export default function Home() {
                     >
                         Reserva rápida
                     </Link>
-                    <p className="text-sm text-gray-300 mt-4 max-w-md">
+                    <p className="animate-fade-in-up text-sm text-gray-300 mt-4 max-w-md">
                         Tu próximo turno en el taller, a un clic.
                     </p>
                 </div>
@@ -50,20 +51,45 @@ export default function Home() {
 
             <LogosBar />
 
-            <div>
+            <section
+                className="relative bg-cover bg-center bg-no-repeat py-16 px-6 text-white text-center"
+                style={{
+                    backgroundImage: `url(${bgSeguimiento})`,
+                }}
+            >
+                {/* Overlay oscuro para mejorar legibilidad */}
+                <div className="absolute inset-0 z-0" />
 
-                <Link
-                    to="/seguimiento"
-                    className="mt-6 inline-block border border-white text-white hover:bg-white hover:text-blue-700 font-semibold py-3 px-6 rounded transition"
-                >
-                    Seguimientos
-                </Link>
-            </div>
+                <div className="relative z-10 max-w-2xl mx-auto space-y-6">
+                    {/* Título con entrada animada */}
+                    <h2 className="animate-fade-in-up text-3xl sm:text-4xl font-extrabold tracking-wide leading-tight text-gray-600 drop-shadow-md">
+                        Hacé <span className="text-teal-700">seguimiento</span> de tu cita
+                    </h2>
+
+                    {/* Párrafo con delay */}
+                    <p className="text-gray-600 text-base sm:text-lg drop-shadow-sm animate-fade-in-up delay-150">
+                        Consultá el estado de tu reserva, cancelá o agendá un nuevo turno.
+                    </p>
+
+                    {/* Botón con delay extra */}
+                    <Link
+                        to="/seguimiento"
+                        className="inline-block animate-bounce bg-teal-200 text-emerald-700 font-semibold px-6 py-3 rounded-full shadow hover:scale-100 hover:shadow-lg transition transform duration-200"
+                    >
+                        Mis Reservas
+                    </Link>
+                </div>
+            </section>
+
+
+
+
+
 
 
             <div>
                 <Footer />
             </div>
-        </div>
+        </div >
     );
 }

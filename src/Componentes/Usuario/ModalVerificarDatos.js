@@ -1,7 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import { useSeguimiento } from "../SeguimientoContext";
 
 export default function ModalVerificarDatos({ formData, onClose, onConfirm }) {
+
+    const { updateSeguimiento } = useSeguimiento();
 
     const fecha = new Date(`${formData.fechaSeleccionada}T12:00:00`);
 
@@ -58,6 +61,11 @@ export default function ModalVerificarDatos({ formData, onClose, onConfirm }) {
                 return;
             }
 
+            const cedula = formData.CedulaCliente;
+            const email = formData.EmailCliente;
+
+            updateSeguimiento({ cedula, email });
+
 
             const response = await fetch("http://localhost:8081/sgc/api/v1/reserva", {
                 method: "POST",
@@ -77,7 +85,7 @@ export default function ModalVerificarDatos({ formData, onClose, onConfirm }) {
 
             } else {
                 toast.success("Reserva creada con éxito");
-                setTimeout(() => navigate("/"), 2000);
+                setTimeout(() => navigate("/seguimiento"), 2000);
             }
 
         } catch (error) {
@@ -87,7 +95,7 @@ export default function ModalVerificarDatos({ formData, onClose, onConfirm }) {
 
         }
     };
-//s
+
 
 
     return (

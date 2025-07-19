@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="bg-gray-200 text-gray-700 border-t mt-16">
+    <footer className="bg-gray-200 text-gray-700 border-t">
       <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row justify-between items-center">
         <div className="text-sm text-center md:text-left">
           © {new Date().getFullYear()} Taller Videsol. Todos los derechos reservados.
