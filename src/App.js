@@ -20,6 +20,8 @@ import ListaAdmin from "./Componentes/Admin/ListaAdmin";
 import ListaMarcas from "./Componentes/Admin/ListaMarcas";
 import ListaModelos from "./Componentes/Admin/ListaModelos";
 import ListaTipoTarea from "./Componentes/Admin/ListaTipoTarea";
+import CrearRetenes from "./Componentes/Admin/FormularioTareasReten";
+import ExcepcionesHorarias from "./Componentes/Admin/GestionExcepcionesHorarias";
 
 function App() {
   return (
@@ -101,6 +103,22 @@ function App() {
             <RutaProtegidaMecanico>
               <VisorTareasMecanico />
             </RutaProtegidaMecanico>
+          }
+        />
+        <Route
+          path="/crear-retenes"
+          element={
+            <RutaProtegida>
+              <CrearRetenes />
+            </RutaProtegida>
+          }
+        />
+        <Route
+          path="/excepciones-no-laborables"
+          element={
+            <RutaProtegida>
+              <ExcepcionesHorarias />
+            </RutaProtegida>
           }
         />
 

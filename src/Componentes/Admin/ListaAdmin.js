@@ -48,6 +48,14 @@ export default function ListaAdministradores() {
         navigate('/ListaMecanicos');
     }
 
+    const toCrearRetenes = () => {
+        navigate('/crear-retenes');
+    }
+
+    const toExcepciones = () => {
+        navigate('/excepciones-no-laborables');
+    }
+
 
     const abrirModalEditar = (id) => {
         setAdministradorSeleccionado(id);
@@ -109,36 +117,50 @@ export default function ListaAdministradores() {
                         ))}
                     </tbody>
 
-                    
+
                 </table>
 
-<button
-                        onClick={() => toMarca()}
-                        className="rounded-full p-5 bg-blue-600 hover:bg-blue-700  text-white shadow-md shadow-gray-400 mr-2"
-                    >
-                        Marcas
-                    </button>
+                <button
+                    onClick={() => toMarca()}
+                    className="rounded-full p-5 bg-blue-600 hover:bg-blue-700  text-white shadow-md shadow-gray-400 mr-2"
+                >
+                    Marcas
+                </button>
 
-                    <button
-                        onClick={() => toModelo()}
-                        className="rounded-full p-5 bg-blue-600 hover:bg-blue-700  text-white shadow-md shadow-gray-400 mr-2"
-                    >
-                        Modelos
-                    </button>
+                <button
+                    onClick={() => toModelo()}
+                    className="rounded-full p-5 bg-blue-600 hover:bg-blue-700  text-white shadow-md shadow-gray-400 mr-2"
+                >
+                    Modelos
+                </button>
 
-                    <button
-                        onClick={() => toTipoTarea()}
-                        className="rounded-full p-5 bg-blue-600 hover:bg-blue-700  text-white shadow-md shadow-gray-400 mr-2"
-                    >
-                        Tipo de Tareas
-                    </button>
-                    <button
-                        onClick={() => toMecanico()}
-                        className="rounded-full p-5 bg-blue-600 hover:bg-blue-700  text-white shadow-md shadow-gray-400 mr-2"
-                    >
-                        Mecanicos
-                    </button>
-                    
+                <button
+                    onClick={() => toCrearRetenes()}
+                    className="rounded-full p-5 bg-cyan-800 text-white shadow-md shadow-gray-400 mr-2"
+                >
+                    Crear Retenes
+                </button>
+
+                <button
+                    onClick={() => toExcepciones()}
+                    className="rounded-full p-5 bg-cyan-800 text-white shadow-md shadow-gray-400 mr-2"
+                >
+                    Inhabilitar días feriados
+                </button>
+
+                <button
+                    onClick={() => toTipoTarea()}
+                    className="rounded-full p-5 bg-blue-600 hover:bg-blue-700  text-white shadow-md shadow-gray-400 mr-2"
+                >
+                    Tipo de Tareas
+                </button>
+                <button
+                    onClick={() => toMecanico()}
+                    className="rounded-full p-5 bg-blue-600 hover:bg-blue-700  text-white shadow-md shadow-gray-400 mr-2"
+                >
+                    Mecanicos
+                </button>
+
                 <ModalAdmin
                     idAdmin={administradorSeleccionado}
                     isOpen={isModalOpen}
