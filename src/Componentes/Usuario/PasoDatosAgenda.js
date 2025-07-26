@@ -3,6 +3,8 @@ import { XCircleIcon } from "@heroicons/react/20/solid";
 import ModalCalendario from "./ModalCalendario";
 import ModalHorarios from "./ModalHorarios";
 import { CalendarIcon } from "@heroicons/react/24/solid";
+import { API_BASE_URL } from "../../config/apiConfig";
+
 
 export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
     const [tareasDisponibles, setTareasDisponibles] = useState([]);
