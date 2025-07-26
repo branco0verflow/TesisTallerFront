@@ -34,7 +34,7 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
         : [];
 
     useEffect(() => {
-        fetch("http://localhost:8081/sgc/api/v1/tipotarea")
+        fetch(`${API_BASE_URL}tipotarea`)
             .then(res => res.json())
             .then(data => setTareasDisponibles(data))
             .catch(err => console.error("Error al cargar tareas:", err));
