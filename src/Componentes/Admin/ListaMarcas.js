@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ModalMarca from "./ModalMarca";
+import { useNavigate } from "react-router-dom";
 
 export default function ListaMarcas() {
   const [marcas, setMarcas] = useState([]);
@@ -7,6 +8,7 @@ export default function ListaMarcas() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [marcaSeleccionada, setMarcaSeleccionada] = useState(null);
   const [marcaModificada, setMarcaModificada] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchMarcas();
@@ -21,7 +23,7 @@ export default function ListaMarcas() {
 
   const fetchMarcas = async () => {
     try {
-      const response = await fetch("http://localhost:8081/sgc/api/v1/marca");
+      const response = await fetch(`${API_BASE_URL}marca`);
       const data = await response.json();
       setMarcas(data);
     } catch (error) {
@@ -46,36 +48,59 @@ export default function ListaMarcas() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Listado de Marcas</h1>
-      <button
-        onClick={() => abrirModalCrear()}
-        className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-      >
-        Crear
-      </button>
-      <div className="overflow-x-auto">
-        <table className="min-w-full border">
-          <thead className="bg-gray-100">
+    <div className="p-6 max-w-4xl mx-auto bg-white shadow rounded-xl">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Listado de Marcas</h1>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex gap-3">
+
+            <button
+              onClick={() => navigate("/ListaAdmin")}
+              className="text-sm text-gray-600 hover:text-blue-600 hover:underline flex items-center mr-3"
+            >
+              ← Volver al Panel
+            </button>
+          </div>
+          <button
+            onClick={() => abrirModalCrear()}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md shadow-sm transition"
+          >
+            + Crear Marca
+          </button>
+        </div>
+
+      </div>
+
+
+
+      <div className="overflow-x-auto rounded-lg border border-gray-200">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-2 text-left">Marca</th>
-              <th className="px-4 py-2 text-left">Acciones</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Marca
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Acciones
+              </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="bg-white divide-y divide-gray-100">
             {marcas.map((marca) => (
-              <tr key={marca.idMarca} className="border-t">
-                <td className="px-4 py-2">{marca.nombreMarca}</td>
-                <td className="px-4 py-2">
+              <tr key={marca.idMarca}>
+                <td className="px-6 py-4 whitespace-nowrap text-gray-800">
+                  {marca.nombreMarca}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap flex gap-2">
                   <button
                     onClick={() => abrirModalVer(marca.idMarca)}
-                    className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                    className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm border border-gray-300"
                   >
                     Ver
                   </button>
                   <button
                     onClick={() => abrirModalEditar(marca.idMarca)}
-                    className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm"
                   >
                     Modificar
                   </button>
@@ -84,15 +109,16 @@ export default function ListaMarcas() {
             ))}
           </tbody>
         </table>
-
-        <ModalMarca
-          idMarca={marcaSeleccionada}
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          setMarcaModificada={setMarcaModificada}
-          modo={modoModal}
-        />
       </div>
+
+      <ModalMarca
+        idMarca={marcaSeleccionada}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        setMarcaModificada={setMarcaModificada}
+        modo={modoModal}
+      />
     </div>
+
   );
 }

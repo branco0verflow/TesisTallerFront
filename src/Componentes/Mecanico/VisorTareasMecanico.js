@@ -36,7 +36,7 @@ export default function VisorTareasMecanico() {
     mostrarDetalleReserva
   );
 
-  
+
   const opcionesFecha = {
     weekday: "long",
     day: "numeric",
@@ -51,13 +51,13 @@ export default function VisorTareasMecanico() {
     setFechaSeleccionada(nueva);
   };
 
-  
+
   useEffect(() => {
     const fetchTareasDelDia = async () => {
       try {
         const fechaIso = fechaSeleccionada.toISOString().split("T")[0];
         const res = await fetch(
-          `http://localhost:8081/sgc/api/v1/tarea/fecha/${fechaIso}`
+          `${API_BASE_URL}tarea/fecha/${fechaIso}`
         );
         const data = await res.json();
         setTareas(data);
@@ -68,7 +68,7 @@ export default function VisorTareasMecanico() {
 
     fetchTareasDelDia();
 
-    
+
     const fechaIso = fechaSeleccionada.toISOString().split("T")[0];
     const fechaMuestra = new Date(`${fechaIso}T12:00:00`);
     const str = fechaMuestra.toLocaleDateString("es-ES", opcionesFecha);
@@ -77,10 +77,10 @@ export default function VisorTareasMecanico() {
 
   const tareasMec = tareas.filter((t) => t.idMecanico === mecanico?.idMecanico);
 
-  
+
   return (
     <div className="p-4 w-full max-w-full overflow-x-auto">
-      
+
       <div className="flex justify-center gap-2 mb-4">
         <button
           onClick={() => cambiarDia(-1)}
@@ -109,19 +109,19 @@ export default function VisorTareasMecanico() {
         {fechaCapitalizada}
       </div>
 
-      
+
       <div
         className="grid border border-gray-300 rounded shadow bg-white grid-cols-[44px_1fr] sm:grid-cols-[80px_1fr] grid-rows-[40px_1fr]"
       >
-        
+
         <div className="row-start-1 col-start-1" />
 
-        
+
         <div className="row-start-1 col-start-2 hidden sm:flex items-center justify-center bg-gray-100 border-l border-b text-gray-700 font-semibold px-2">
           {mecanico?.nombreMecanico || "Mecánico"}
         </div>
 
-        
+
         <div className="row-start-2 col-start-1 flex flex-col w-11 sm:w-20 border-r bg-gray-50/40 overflow-hidden">
           {hours.map((h) => (
             <div
@@ -158,6 +158,7 @@ export default function VisorTareasMecanico() {
                   <div className="font-semibold truncate">
                     {t.descripcionTarea || "Tarea"}
                   </div>
+                  
                   <div className="text-[8px] sm:text-[10px] leading-tight mt-1 select-none">
                     Estado: {t.nombreEstado}
                     <br />
@@ -173,7 +174,7 @@ export default function VisorTareasMecanico() {
         </div>
       </div>
 
-      
+
       {modalTareaVisible && tareaSeleccionada && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="bg-white text-gray-800 p-6 rounded shadow-lg w-full max-w-lg mx-auto">
@@ -199,7 +200,7 @@ export default function VisorTareasMecanico() {
               {tareaSeleccionada.nombreEstado}
             </p>
 
-            
+
             {tareaSeleccionada.esReservaTarea && !mostrarDetalleReserva && (
               <button
                 onClick={() => setMostrarDetalleReserva(true)}
@@ -217,6 +218,16 @@ export default function VisorTareasMecanico() {
 
                 {reserva && (
                   <>
+                  {reserva?.tipoTarea?.length > 0 && (
+                    <div className="mb-4 text-sm text-gray-700 border border-blue-200 bg-blue-50 p-3 rounded">
+                      <p className="font-semibold text-blue-800 mb-1">Tipos de tarea de la reserva:</p>
+                      <ul className="list-disc list-inside text-gray-800">
+                        {reserva.tipoTarea.map((tipo) => (
+                          <li key={tipo.idTipoTarea}>{tipo.nombreTipoTarea}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                     <h3 className="font-bold">
                       {reserva.cliente.nombreCliente} {" "}
                       {reserva.cliente.apellidoCliente}

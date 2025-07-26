@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ModalMecanico from "./ModalMecanico";
+import { useNavigate } from "react-router-dom";
 
 export default function ListaMecanicos() {
   const [mecanicos, setMecanicos] = useState([]);
@@ -7,6 +8,7 @@ export default function ListaMecanicos() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mecanicoSeleccionado, setMecanicoSeleccionado] = useState(null);
   const [mecanicoModificado, setMecanicoModificado] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchMecanicos();
@@ -21,7 +23,7 @@ export default function ListaMecanicos() {
 
   const fetchMecanicos = async () => {
     try {
-      const res = await fetch("http://localhost:8081/sgc/api/v1/mecanico");
+      const res = await fetch(`${API_BASE_URL}mecanico/DTO`);
       const data = await res.json();
       setMecanicos(data);
     } catch (err) {
@@ -29,16 +31,7 @@ export default function ListaMecanicos() {
     }
   };
 
-  const handleActivarDesactivar = async (id, estadoActual) => {
-    try {
-      await fetch(`http://localhost:8081/sgc/api/v1/mecanico/${id}/estado`, {
-        method: "PATCH"
-      });
-      fetchMecanicos();
-    } catch (err) {
-      console.error("Error al cambiar el estado del mecánico", err);
-    }
-  };
+
 
   const abrirModalEditar = (id) => {
     setMecanicoSeleccionado(id);
@@ -57,68 +50,69 @@ export default function ListaMecanicos() {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Listado de Mecánicos</h1>
-        <button
-          onClick={() => abrirModalCrear()}
-          className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-        >
-          Crear
-        </button>
+    <div className="p-6 max-w-6xl mx-auto bg-white shadow rounded-xl">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Listado de Mecánicos</h1>
+        <div className="flex gap-3">
+          <button
+            onClick={() => navigate("/ListaAdmin")}
+            className="text-sm text-gray-600 hover:text-blue-600 hover:underline flex items-center gap-1"
+          >
+            ← Volver al Panel
+          </button>
+          <button
+            onClick={() => abrirModalCrear()}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md shadow-sm transition"
+          >
+            + Crear Mecánico
+          </button>
+        </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full border">
-          <thead className="bg-gray-100">
+      <div className="overflow-x-auto rounded-lg border border-gray-200">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-2 text-left">Nombre</th>
-              <th className="px-4 py-2 text-left">Apellido</th>
-              <th className="px-4 py-2 text-left">Activo</th>
-              <th className="px-4 py-2">Acciones</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Apellido</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Activo</th>
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="bg-white divide-y divide-gray-100">
             {mecanicos.map((mecanico) => (
-              <tr key={mecanico.idMecanico} className="border-t">
-                <td className="px-4 py-2">{mecanico.nombreMecanico}</td>
-                <td className="px-4 py-2">{mecanico.apellidoMecanico}</td>
-                <td className="px-4 py-2">
-                  {mecanico.activoMecanico ? "Sí" : "No"}
-                </td>
-                <td className="px-4 py-2 flex gap-2 justify-center">
+              <tr key={mecanico.idMecanico}>
+                <td className="px-6 py-4 text-gray-800">{mecanico.nombreMecanico}</td>
+                <td className="px-6 py-4 text-gray-800">{mecanico.apellidoMecanico}</td>
+                <td className="px-6 py-4 text-gray-800">{mecanico.activoMecanico ? "Sí" : "No"}</td>
+                <td className="px-6 py-4 flex justify-center gap-2">
                   <button
                     onClick={() => abrirModalVer(mecanico.idMecanico)}
-                    className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                    className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm border border-gray-300"
                   >
                     Ver
                   </button>
                   <button
                     onClick={() => abrirModalEditar(mecanico.idMecanico)}
-                    className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm"
                   >
                     Modificar
-                  </button>
-                  <button
-                    onClick={() => handleActivarDesactivar(mecanico.idMecanico)}
-                    className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                  >
-                    {mecanico.activoMecanico ? "Desactivar" : "Activar"}
                   </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-
-        <ModalMecanico
-          idMecanico={mecanicoSeleccionado}
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          setMecanicoModificado={setMecanicoModificado}
-          modo={modoModal}
-        />
       </div>
+
+      <ModalMecanico
+        idMecanico={mecanicoSeleccionado}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        setMecanicoModificado={setMecanicoModificado}
+        modo={modoModal}
+      />
     </div>
+
   );
 }

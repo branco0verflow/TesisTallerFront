@@ -22,6 +22,7 @@ import ListaModelos from "./Componentes/Admin/ListaModelos";
 import ListaTipoTarea from "./Componentes/Admin/ListaTipoTarea";
 import CrearRetenes from "./Componentes/Admin/FormularioTareasReten";
 import ExcepcionesHorarias from "./Componentes/Admin/GestionExcepcionesHorarias";
+import VisionMecanicoCompleta from "./Componentes/Admin/VisionCompletaMecanico";
 
 function App() {
   return (
@@ -118,6 +119,15 @@ function App() {
           element={
             <RutaProtegida>
               <ExcepcionesHorarias />
+            </RutaProtegida>
+          }
+        />
+
+        <Route
+          path="/vision-mecanico"
+          element={
+            <RutaProtegida>
+              <VisionMecanicoCompleta />
             </RutaProtegida>
           }
         />

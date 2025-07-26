@@ -18,7 +18,7 @@ export default function ModalCalendario({ diasDisponibles, onClose, onDiaSelecci
     dia2.setDate(hoy.getDate() + 2);
 
     const diaLimite = new Date(hoy);
-    diaLimite.setDate(hoy.getDate() + 20);
+    diaLimite.setDate(hoy.getDate() + 35);
 
     const esFechaHabilitada = (date) => {
         const stringDate = date.toDateString();
@@ -29,7 +29,7 @@ export default function ModalCalendario({ diasDisponibles, onClose, onDiaSelecci
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
                 <h2 className="text-xl font-bold mb-2">Selecciona un día</h2>
-                <p className="text-sm text-gray-600 mb-4">* Próximos 20 días disponibles</p>
+                <p className="text-sm text-gray-600 mb-4">* Próximos 35 días disponibles</p>
 
                 <DayPicker
                     mode="single"

@@ -14,7 +14,7 @@ function LoginAdmin() {
     e.preventDefault();
 
     try {
-      const loginResponse = await fetch("http://localhost:8081/sgc/api/v1/login", {
+      const loginResponse = await fetch(`${API_BASE_URL}login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -31,7 +31,7 @@ function LoginAdmin() {
         return;
       }
 
-      const meResponse = await fetch("http://localhost:8081/sgc/api/v1/admin/me", {
+      const meResponse = await fetch(`${API_BASE_URL}admin/me`, {
         method: "GET",
         credentials: "include",
       });

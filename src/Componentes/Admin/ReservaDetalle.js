@@ -11,7 +11,7 @@ export default function useReservaDetalle(idReserva, mostrar) {
     const fetchReserva = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`http://localhost:8081/sgc/api/v1/reserva/${idReserva}`);
+        const res = await fetch(`${API_BASE_URL}reserva/${idReserva}`);
         if (!res.ok) throw new Error("No se pudo obtener la reserva");
         const data = await res.json();
         setReserva(data);

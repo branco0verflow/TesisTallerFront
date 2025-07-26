@@ -97,7 +97,7 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
         const ids = formData.tareas.map(t => t.idTipoTarea);
         const queryParams = new URLSearchParams({
             ids: ids.join(","),
-            limiteDias: "20"
+            limiteDias: "35"
         });
 
         fetch(`http://localhost:8081/sgc/api/v1/disponibilidad?${queryParams}`)

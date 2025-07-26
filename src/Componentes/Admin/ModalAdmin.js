@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { useAdmin } from "../../AdminContext";
 import { TrashIcon } from "@heroicons/react/24/solid";
 
 export default function ModalAdmin({ idAdmin, isOpen, onClose, setAdministradorModificado, modo }) {
     const [loading, setLoading] = useState(true);
     const [administrador, setAdministrador] = useState(null);
+    const { admin } = useAdmin();
 
     let tituloModal = "Modificar Administrador";
     if (modo === "view") tituloModal = "Ver Administrador";
@@ -15,7 +17,7 @@ export default function ModalAdmin({ idAdmin, isOpen, onClose, setAdministradorM
             setAdministrador({ nombreAdmin: "" });
             setLoading(false);
         } else if (idAdmin && isOpen) {
-            fetch(`http://localhost:8081/sgc/api/v1/administrador/${idAdmin}`)
+            fetch(`${API_BASE_URL}administrador/${idAdmin}`)
                 .then(res => res.json())
                 .then(data => {
                     setAdministrador({
@@ -37,7 +39,7 @@ export default function ModalAdmin({ idAdmin, isOpen, onClose, setAdministradorM
     };
 
     const crearAdministrador = () => {
-        fetch(`http://localhost:8081/sgc/api/v1/administrador`, {
+        fetch(`${API_BASE_URL}administrador`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(administrador),
@@ -58,7 +60,7 @@ export default function ModalAdmin({ idAdmin, isOpen, onClose, setAdministradorM
     };
 
     const modificarAdministrador = () => {
-        fetch(`http://localhost:8081/sgc/api/v1/administrador/${idAdmin}`, {
+        fetch(`${API_BASE_URL}administrador/${idAdmin}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(administrador),
@@ -80,9 +82,14 @@ export default function ModalAdmin({ idAdmin, isOpen, onClose, setAdministradorM
     };
 
     const eliminarAdministrador = () => {
+        if (admin.idAdmin === idAdmin) {
+            alert("No se puede eliminar el administrador en uso.");
+            return;
+        }
+
         if (!window.confirm("¿Estás seguro de eliminar este Administrador?")) return;
 
-        fetch(`http://localhost:8081/sgc/api/v1/administrador/${idAdmin}`, {
+        fetch(`${API_BASE_URL}administrador/${idAdmin}`, {
             method: "DELETE",
         })
             .then(res => {

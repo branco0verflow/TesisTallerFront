@@ -181,7 +181,7 @@ export default function Seguimientos() {
         
         {cliente && (
           <section className="mb-6">
-            <div className="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl p-4 shadow">
+            <div className="animate-fade-in-up flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl p-4 shadow">
               <UserCircleIcon className="w-10 h-10" />
               <p className="text-lg font-semibold">
                 Hola {cliente.nombre} {cliente.apellido}, estos son tus vehículos registrados:
@@ -199,7 +199,7 @@ export default function Seguimientos() {
               return (
                 <article
                   key={v.idVehiculo}
-                  className="flex flex-col justify-between bg-white shadow-md rounded-xl p-5 border hover:shadow-lg transition"
+                  className="animate-fade-in flex flex-col justify-between bg-white shadow-md rounded-xl p-5 border hover:shadow-lg transition"
                 >
                   
                   <header className="mb-3">

@@ -8,6 +8,12 @@ export default function ModalCrearTarea({ isOpen, onClose, onCrear, fecha, idMec
         descripcion: ""
     });
 
+    if (!fecha) {
+    alert("No se ha seleccionado una fecha válida.");
+    return;
+}
+
+
     const { admin } = useAdmin(); 
 
     const handleChange = (e) => {

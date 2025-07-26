@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useMecanico } from "../../MecanicoContext";
 import logoLogin from '../../Images/LogoTallerLogin.png';
 import MenuNavBar from "../Usuario/MenuNavBar";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 function LoginMecanico() {
   const [email, setEmail] = useState("");
@@ -14,7 +15,7 @@ function LoginMecanico() {
     e.preventDefault();
 
     try {
-      const loginResponse = await fetch("http://localhost:8081/sgc/api/v1/login", {
+      const loginResponse = await fetch(`${API_BASE_URL}login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -31,7 +32,7 @@ function LoginMecanico() {
         return;
       }
 
-      const meResponse = await fetch("http://localhost:8081/sgc/api/v1/mecanico/me", {
+      const meResponse = await fetch(`${API_BASE_URL}mecanico/me`, {
         method: "GET",
         credentials: "include",
       });

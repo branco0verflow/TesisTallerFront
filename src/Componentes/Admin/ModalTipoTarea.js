@@ -15,7 +15,7 @@ export default function ModalTipoTarea({ idTipoTarea, isOpen, onClose, setTipoTa
       setTipoTarea({ nombreTipoTarea: "" });
       setLoading(false);
     } else if (idTipoTarea && isOpen) {
-      fetch(`http://localhost:8081/sgc/api/v1/tipotarea/${idTipoTarea}`)
+      fetch(`${API_BASE_URL}tipotarea/${idTipoTarea}`)
         .then(res => res.json())
         .then(data => {
           setTipoTarea(data);
@@ -34,7 +34,7 @@ export default function ModalTipoTarea({ idTipoTarea, isOpen, onClose, setTipoTa
   };
 
   const crearTipoTarea = () => {
-    fetch(`http://localhost:8081/sgc/api/v1/tipotarea`, {
+    fetch(`${API_BASE_URL}tipotarea`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(tipoTarea),
@@ -55,7 +55,7 @@ export default function ModalTipoTarea({ idTipoTarea, isOpen, onClose, setTipoTa
   };
 
   const modificarTipoTarea = () => {
-    fetch(`http://localhost:8081/sgc/api/v1/tipotarea/${idTipoTarea}`, {
+    fetch(`${API_BASE_URL}tipotarea/${idTipoTarea}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(tipoTarea),
@@ -78,7 +78,7 @@ export default function ModalTipoTarea({ idTipoTarea, isOpen, onClose, setTipoTa
   const eliminarTipoTarea = () => {
     if (!window.confirm("¿Estás seguro de eliminar este Tipo de Tarea?")) return;
 
-    fetch(`http://localhost:8081/sgc/api/v1/tipotarea/${idTipoTarea}`, {
+    fetch(`${API_BASE_URL}tipotarea/${idTipoTarea}`, {
       method: "DELETE",
     })
       .then(res => {

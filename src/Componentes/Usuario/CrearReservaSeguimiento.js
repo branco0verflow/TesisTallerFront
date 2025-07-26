@@ -127,7 +127,7 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
         const ids = nuevaReserva.tareas.map(t => t.idTipoTarea);
         const queryParams = new URLSearchParams({
             ids: ids.join(","),
-            limiteDias: "20"
+            limiteDias: "35"
         });
 
         fetch(`http://localhost:8081/sgc/api/v1/disponibilidad?${queryParams}`)
@@ -259,7 +259,7 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
                 </header>
 
                 {/* — Formulario — */}
-                <div className="bg-white/70 backdrop-blur rounded-2xl shadow-lg ring-1 ring-gray-200 p-6 space-y-6">
+                <div className="animate-fade-in bg-white/70 backdrop-blur rounded-2xl shadow-lg ring-1 ring-gray-200 p-6 space-y-6">
                     {/* Teléfono */}
                     {cliente && (
                         <div className="space-y-1">
@@ -289,7 +289,7 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
                                     placeholder="Ingresá un nuevo teléfono"
                                     value={telefonoEditado}
                                     onChange={(e) => setTelefonoEditado(e.target.value)}
-                                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                                    className="animate-fade-in w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                                     onBlur={() => {
                                         if (telefonoEditado.trim()) {
                                             setTelefono(telefonoEditado);

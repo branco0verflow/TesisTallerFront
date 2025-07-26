@@ -6,6 +6,7 @@ export default function ModalMecanico({ idMecanico, isOpen, onClose, setMecanico
     const [loading, setLoading] = useState(true);
     const [mecanico, setMecanico] = useState(null);
     const [tipoTareas, setTipoTareas] = useState([]);
+    const [tareaSeleccionada, setTareaSeleccionada] = useState("");
 
     let tituloModal = "Modificar Mecanico";
     if (modo === "view") tituloModal = "Ver Mecanico";
@@ -13,27 +14,31 @@ export default function ModalMecanico({ idMecanico, isOpen, onClose, setMecanico
 
     useEffect(() => {
         if (modo === "create") {
-            setMecanico({ nombreMecanico: "" });
+            setMecanico({
+                nombre: "",
+                apellido: "",
+                tipoTareaIds: [],
+            });
             setLoading(false);
         } else if (idMecanico && isOpen) {
-            fetch(`http://localhost:8081/sgc/api/v1/mecanico/${idMecanico}`)
+            fetch(`${API_BASE_URL}mecanico/DTO/${idMecanico}`)
                 .then(res => res.json())
                 .then(data => {
                     setMecanico({
                         ...data,
-                        tipoTareaIds: data.tipoTareas?.map(t => t.idTipoTarea) || []
+                        tipoTareaIds: data.tipoTareaIds || [],
                     });
                     setLoading(false);
                 })
                 .catch(error => {
-                    console.error("Error al obtener el mecanico:", error);
+                    console.error("Error al obtener el mecánico:", error);
                     setLoading(false);
                 });
         }
     }, [idMecanico, isOpen, modo]);
 
     useEffect(() => {
-        fetch(`http://localhost:8081/sgc/api/v1/tipotarea`)
+        fetch(`${API_BASE_URL}tipotarea`)
             .then(res => res.json())
             .then(data => setTipoTareas(data))
             .catch(err => console.error("Error al obtener tipo de tareas:", err));
@@ -61,7 +66,7 @@ export default function ModalMecanico({ idMecanico, isOpen, onClose, setMecanico
     };
 
     const crearMecanico = () => {
-        fetch(`http://localhost:8081/sgc/api/v1/mecanico`, {
+        fetch(`${API_BASE_URL}mecanico`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(mecanico),
@@ -82,13 +87,12 @@ export default function ModalMecanico({ idMecanico, isOpen, onClose, setMecanico
     };
 
     const modificarMecanico = () => {
-        fetch(`http://localhost:8081/sgc/api/v1/mecanico/${idMecanico}`, {
+        fetch(`${API_BASE_URL}mecanico/${idMecanico}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(mecanico),
         })
             .then(res => {
-                console.log("Respuesta del servidor:", res);
                 if (res.ok) {
                     toast.success("Mecanico actualizado");
                     setMecanicoModificado(true);
@@ -106,7 +110,7 @@ export default function ModalMecanico({ idMecanico, isOpen, onClose, setMecanico
     const eliminarMecanico = () => {
         if (!window.confirm("¿Estás seguro de eliminar este mecanico?")) return;
 
-        fetch(`http://localhost:8081/sgc/api/v1/mecanico/${idMecanico}`, {
+        fetch(`${API_BASE_URL}mecanico/${idMecanico}`, {
             method: "DELETE",
         })
             .then(res => {
@@ -228,8 +232,12 @@ export default function ModalMecanico({ idMecanico, isOpen, onClose, setMecanico
                         <label className="block">Agregar tipo de tarea:</label>
                         <select
                             className="w-full border mt-1 px-2 py-1 rounded"
-                            onChange={e => handleAgregarTarea(Number(e.target.value))}
-                            defaultValue=""
+                            value={tareaSeleccionada}
+                            onChange={e => {
+                                const id = Number(e.target.value);
+                                handleAgregarTarea(id);
+                                setTareaSeleccionada(""); // Resetear selección
+                            }}
                         >
                             <option value="" disabled>Seleccionar tipo de tarea</option>
                             {tipoTareas

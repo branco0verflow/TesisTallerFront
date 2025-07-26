@@ -11,13 +11,13 @@ export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanico
   const [calendarioVisible, setCalendarioVisibleModal] = useState(false);
 
 
-    const toggleCalendario = () => {
+  const toggleCalendario = () => {
     setCalendarioVisibleModal(prev => !prev);
   };
 
   useEffect(() => {
     if (idTarea && isOpen) {
-      fetch(`http://localhost:8081/sgc/api/v1/tarea/${idTarea}`)
+      fetch(`${API_BASE_URL}tarea/${idTarea}`)
         .then(res => res.json())
         .then(data => {
           setTarea({
@@ -73,7 +73,7 @@ export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanico
       idAdmin: tarea.idAdmin,
     };
 
-    fetch(`http://localhost:8081/sgc/api/v1/tarea/${idTarea}`, {
+    fetch(`${API_BASE_URL}tarea/${idTarea}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(tareaDTO),
@@ -93,7 +93,7 @@ export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanico
   };
 
   const eliminarTarea = (idTarea) => {
-    fetch(`http://localhost:8081/sgc/api/v1/tarea/${idTarea}`, {
+    fetch(`${API_BASE_URL}tarea/${idTarea}`, {
       method: "DELETE",
     })
       .then(res => {
@@ -139,26 +139,26 @@ export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanico
         </div>
 
         <div className="flex items-start gap-4 mb-4 flex-wrap">
-  {/* Botón toggle */}
-  <button
-    onClick={toggleCalendario}
-    className="rounded-full p-3 bg-blue-600 hover:bg-blue-700 text-white"
-    title={calendarioVisible ? "Ocultar calendario" : "Mostrar calendario"}
-  >
-    <CalendarIcon className="h-6 w-6" />
-  </button>
+          {/* Botón toggle */}
+          <button
+            onClick={toggleCalendario}
+            className="rounded-full p-3 bg-blue-600 hover:bg-blue-700 text-white"
+            title={calendarioVisible ? "Ocultar calendario" : "Mostrar calendario"}
+          >
+            <CalendarIcon className="h-6 w-6" />
+          </button>
 
-  {/* Calendario visible al togglear */}
-  {calendarioVisible && (
-    <div className="border rounded-md p-2 max-h-[300px] overflow-y-auto">
-      <DayPicker
-        mode="single"
-        selected={fechaSeleccionada}
-        onSelect={setFechaSeleccionada}
-      />
-    </div>
-  )}
-</div>
+          {/* Calendario visible al togglear */}
+          {calendarioVisible && (
+            <div className="border rounded-md p-2 max-h-[300px] overflow-y-auto">
+              <DayPicker
+                mode="single"
+                selected={fechaSeleccionada}
+                onSelect={setFechaSeleccionada}
+              />
+            </div>
+          )}
+        </div>
 
 
         <label className="block mb-2">
@@ -171,6 +171,17 @@ export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanico
             className="w-full border px-2 py-1 mt-1 rounded"
           />
         </label>
+
+        {tarea.esReservaTarea && tarea.reserva?.tipoTarea?.length > 0 && (
+          <div className="mb-4 text-sm text-gray-700 border border-blue-200 bg-blue-50 p-3 rounded">
+            <p className="font-semibold text-blue-800 mb-1">Tipos de tarea de la reserva:</p>
+            <ul className="list-disc list-inside text-gray-800">
+              {tarea.reserva.tipoTarea.map((tipo) => (
+                <li key={tipo.idTipoTarea}>{tipo.nombreTipoTarea}</li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <div className="flex gap-4 mb-4">
           <label className="flex flex-col text-sm w-30">

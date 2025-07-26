@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { TrashIcon } from "@heroicons/react/24/solid";
+
 
 export default function ModalModelo({ idModelo, isOpen, onClose, setModeloModificado, modo }) {
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,7 @@ export default function ModalModelo({ idModelo, isOpen, onClose, setModeloModifi
       setModelo({ nombreModelo: "" });
       setLoading(false);
     } else if (idModelo && isOpen) {
-      fetch(`http://localhost:8081/sgc/api/v1/modelo/${idModelo}`)
+      fetch(`${API_BASE_URL}modelo/${idModelo}`)
         .then(res => res.json())
         .then(data => {
           setModelo({
@@ -33,7 +33,7 @@ export default function ModalModelo({ idModelo, isOpen, onClose, setModeloModifi
   }, [idModelo, isOpen, modo]);
 
   useEffect(() => {
-    fetch(`http://localhost:8081/sgc/api/v1/marca`)
+    fetch(`${API_BASE_URL}marca`)
       .then(res => res.json())
       .then(data => setMarcas(data))
       .catch(err => console.error("Error al obtener marcas:", err));
@@ -45,8 +45,7 @@ export default function ModalModelo({ idModelo, isOpen, onClose, setModeloModifi
   };
 
   const crearModelo = () => {
-    console.log("modelo: ", modelo)
-    fetch(`http://localhost:8081/sgc/api/v1/modelo`, {
+    fetch(`${API_BASE_URL}modelo`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(modelo),
@@ -68,7 +67,7 @@ export default function ModalModelo({ idModelo, isOpen, onClose, setModeloModifi
   };
 
   const modificarModelo = () => {
-    fetch(`http://localhost:8081/sgc/api/v1/modelo/${idModelo}`, {
+    fetch(`${API_BASE_URL}modelo/${idModelo}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(modelo),
@@ -89,26 +88,6 @@ export default function ModalModelo({ idModelo, isOpen, onClose, setModeloModifi
       });
   };
 
-  const eliminarModelo = () => {
-    if (!window.confirm("¿Estás seguro de eliminar este modelo?")) return;
-
-    fetch(`http://localhost:8081/sgc/api/v1/modelo/${idModelo}`, {
-      method: "DELETE",
-    })
-      .then(res => {
-        if (res.ok) {
-          toast.success("Modelo eliminado");
-          setModeloModificado(true);
-          onClose();
-        } else {
-          toast.error("No se pudo eliminar el modelo");
-        }
-      })
-      .catch(err => {
-        console.error("Error en el servidor:", err);
-        toast.error("Error de red");
-      });
-  };
 
   if (!isOpen) return null;
   if (loading) return <div className="p-4">Cargando modelo...</div>;
@@ -154,15 +133,6 @@ export default function ModalModelo({ idModelo, isOpen, onClose, setModeloModifi
         </label>
 
         <div className="flex justify-between items-center mt-6">
-          {modo === "edit" && (
-            <button
-              onClick={eliminarModelo}
-              className="p-2 rounded-full bg-red-400 hover:bg-red-600 text-white transition"
-              title="Eliminar Modelo"
-            >
-              <TrashIcon className="w-5 h-5" />
-            </button>
-          )}
 
           <div className="flex space-x-2">
             <button onClick={onClose} className="bg-gray-300 px-4 py-2 rounded">
