@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ModalMecanico from "./ModalMecanico";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 export default function ListaMecanicos() {
   const [mecanicos, setMecanicos] = useState([]);

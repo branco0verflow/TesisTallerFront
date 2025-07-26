@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAdmin } from "../../AdminContext";
 import logoLogin from '../../Images/LogoTallerLogin.png';
 import MenuNavBar from "../Usuario/MenuNavBar";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 function LoginAdmin() {
   const [emailAdmin, setEmail] = useState("");

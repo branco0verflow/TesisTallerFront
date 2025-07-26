@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from "../../config/apiConfig";
 
 
 const GestionExcepcionesHorarias = () => {

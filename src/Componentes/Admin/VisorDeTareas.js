@@ -11,6 +11,7 @@ import ModalModificarTarea from "./ModalModificarTarea";
 import BotonLogout from "./BotonLogout";
 import { useNavigate } from 'react-router-dom';
 import { useSearchParams } from "react-router-dom";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 
 export default function CalendarioTareas() {

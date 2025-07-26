@@ -2,6 +2,7 @@ import { useAdmin } from "../../AdminContext";
 import { useMecanico } from "../../MecanicoContext";
 import { useNavigate } from "react-router-dom";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/solid";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 function BotonLogout({ tipoUsuario = "admin" }) {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ function BotonLogout({ tipoUsuario = "admin" }) {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:8081/sgc/api/v1/logout", {
+      await fetch(`${API_BASE_URL}logout`, {
         method: "POST",
         credentials: "include",
       });

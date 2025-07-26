@@ -3,6 +3,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { TrashIcon, CalendarIcon } from "@heroicons/react/24/solid";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanicos, setTareaModificada, estados }) {
   const [loading, setLoading] = useState(true);

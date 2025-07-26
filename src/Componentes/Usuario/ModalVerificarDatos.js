@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { useSeguimiento } from "../SeguimientoContext";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 export default function ModalVerificarDatos({ formData, onClose, onConfirm }) {
 
@@ -67,7 +68,7 @@ export default function ModalVerificarDatos({ formData, onClose, onConfirm }) {
             updateSeguimiento({ cedula, email });
 
 
-            const response = await fetch("http://localhost:8081/sgc/api/v1/reserva", {
+            const response = await fetch(`${API_BASE_URL}reserva`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

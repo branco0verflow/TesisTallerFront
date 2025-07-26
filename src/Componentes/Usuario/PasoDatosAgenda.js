@@ -102,7 +102,7 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
             limiteDias: "35"
         });
 
-        fetch(`http://localhost:8081/sgc/api/v1/disponibilidad?${queryParams}`)
+        fetch(`${API_BASE_URL}disponibilidad?${queryParams}`)
             .then(res => res.json())
             .then(data => {
                 setDiasDisponibles(data);
@@ -127,7 +127,7 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
             fecha: fecha.toISOString().split("T")[0]
         });
 
-        fetch(`http://localhost:8081/sgc/api/v1/disponibilidad/horas?${queryParams}`)
+        fetch(`${API_BASE_URL}disponibilidad/horas?${queryParams}`)
             .then(res => res.json())
             .then(data => {
                 setHorarios(data);

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 export default function useReservaDetalle(idReserva, mostrar) {
   const [reserva, setReserva] = useState(null);

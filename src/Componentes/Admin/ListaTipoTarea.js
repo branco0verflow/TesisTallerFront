@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ModalTipoTarea from "./ModalTipoTarea";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 export default function ListaTipoTareas() {
   const [tipoTareas, settipoTareas] = useState([]);

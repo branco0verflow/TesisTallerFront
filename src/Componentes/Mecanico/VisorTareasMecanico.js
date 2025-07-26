@@ -3,6 +3,7 @@ import { useMecanico } from "../../MecanicoContext";
 import { EyeIcon } from "@heroicons/react/24/outline";
 import ReservaDetalle from "../Admin/ReservaDetalle";
 import BotonLogout from "../Admin/BotonLogout";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 const GRID_START = 8;
 const GRID_END = 17;

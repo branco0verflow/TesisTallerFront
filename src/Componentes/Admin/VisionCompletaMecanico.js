@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { EyeIcon } from "@heroicons/react/24/outline";
 import ReservaDetalle from "./ReservaDetalle";
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from "../../config/apiConfig";
 
 const GRID_START = 8;
 const GRID_END = 17;

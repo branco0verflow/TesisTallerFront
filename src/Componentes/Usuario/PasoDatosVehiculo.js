@@ -8,6 +8,7 @@ import IngresoVision from "./IngresoVision";
 import escanearImg from "../../Images/ScanerModee.png";
 import ModalVerificarDatos from "./ModalVerificarDatos";
 import VideoLibreta from "../../Video/VideoLibreta.mp4";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 export default function PasoDatosVehiculo({
     formData = {
@@ -96,7 +97,7 @@ export default function PasoDatosVehiculo({
 
     const buscarMarcas = async (query) => {
         try {
-            const res = await fetch(`http://localhost:8081/sgc/api/v1/marca/buscar/${query}`);
+            const res = await fetch(`${API_BASE_URL}marca/buscar/${query}`);
             if (!res.ok) throw new Error("Error al buscar marcas");
             const data = await res.json();
             setMarcas(data);
@@ -113,7 +114,7 @@ export default function PasoDatosVehiculo({
             setModelos([]);
             return;
         }
-        fetch(`http://localhost:8081/sgc/api/v1/modelo/buscar?nombre=${encodeURIComponent(nombre)}&idMarca=${formData.IdMarca}`)
+        fetch(`${API_BASE_URL}modelo/buscar?nombre=${encodeURIComponent(nombre)}&idMarca=${formData.IdMarca}`)
             .then((res) => res.json())
             .then((data) => {
                 setModelos(data);

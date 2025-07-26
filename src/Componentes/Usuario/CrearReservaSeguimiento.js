@@ -6,6 +6,7 @@ import { CalendarIcon } from "@heroicons/react/24/solid";
 import MenuNavBar from "./MenuNavBar";
 import { useSeguimiento } from "../SeguimientoContext";
 import toast, { Toaster } from "react-hot-toast";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 export default function CrearReservaSeguimiento({ onReservaCreada }) {
 
@@ -58,7 +59,7 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
     }, [nuevaReserva.horaInicio, nuevaReserva.fechaSeleccionada]);
 
     useEffect(() => {
-        fetch("http://localhost:8081/sgc/api/v1/tipotarea")
+        fetch(`${API_BASE_URL}tipotarea`)
             .then(res => res.json())
             .then(data => setTareasDisponibles(data))
             .catch(err => console.error("Error al cargar tareas:", err));
@@ -66,7 +67,7 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
 
     useEffect(() => {
         if (!idCliente) return;
-        fetch(`http://localhost:8081/sgc/api/v1/cliente/${idCliente}`)
+        fetch(`${API_BASE_URL}cliente/${idCliente}`)
             .then(res => {
                 if (!res.ok) throw new Error("No se encontró el cliente");
                 return res.json();
@@ -81,7 +82,7 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
     useEffect(() => {
         if (!idVehiculo) return;
 
-        fetch(`http://localhost:8081/sgc/api/v1/vehiculo/${idVehiculo}`)
+        fetch(`${API_BASE_URL}vehiculo/${idVehiculo}`)
             .then(res => {
                 if (!res.ok) throw new Error("No se encontró el vehículo");
                 return res.json();
@@ -130,7 +131,7 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
             limiteDias: "35"
         });
 
-        fetch(`http://localhost:8081/sgc/api/v1/disponibilidad?${queryParams}`)
+        fetch(`${API_BASE_URL}disponibilidad?${queryParams}`)
             .then(res => res.json())
             .then(data => {
                 setDiasDisponibles(data);
@@ -153,7 +154,7 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
             fecha: fechaISO
         });
 
-        fetch(`http://localhost:8081/sgc/api/v1/disponibilidad/horas?${queryParams}`)
+        fetch(`${API_BASE_URL}disponibilidad/horas?${queryParams}`)
             .then(res => res.json())
             .then(data => {
                 setHorarios(data);
@@ -192,13 +193,13 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
             idMecanico: nuevaReserva.IdMecanico,
         };
 
-        const actualizarCliente = fetch(`http://localhost:8081/sgc/api/v1/cliente/nuevoPhone/${idCliente}`, {
+        const actualizarCliente = fetch(`${API_BASE_URL}cliente/nuevoPhone/${idCliente}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ telefonoCliente: telefono })
         });
 
-        const actualizarVehiculo = fetch(`http://localhost:8081/sgc/api/v1/vehiculo/nuevoKilometraje/${idVehiculo}`, {
+        const actualizarVehiculo = fetch(`${API_BASE_URL}vehiculo/nuevoKilometraje/${idVehiculo}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ kilometrajeVehiculo: Number(kilometraje) })
@@ -206,7 +207,7 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
 
         Promise.all([actualizarCliente, actualizarVehiculo])
             .then(() => {
-                return fetch("http://localhost:8081/sgc/api/v1/reserva/nuevaReservaSeguimiento", {
+                return fetch(`${API_BASE_URL}reserva/nuevaReservaSeguimiento`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)

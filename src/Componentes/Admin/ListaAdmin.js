@@ -3,6 +3,7 @@ import ModalAdmin from "./ModalAdmin";
 import { useNavigate } from "react-router-dom";
 import { PlusIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
 import BotonLogout from "./BotonLogout";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 export default function ListaAdministradores() {
   const [administradores, setAdministrador] = useState([]);

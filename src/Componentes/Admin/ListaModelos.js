@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ModalModelo from "./ModalModelo";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 export default function ListaModelos() {
   const [modelos, setModelos] = useState([]);

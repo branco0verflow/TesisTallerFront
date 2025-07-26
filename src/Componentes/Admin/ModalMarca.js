@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 export default function ModalMarca({ idMarca, isOpen, onClose, setMarcaModificada, modo }) {
   const [loading, setLoading] = useState(true);

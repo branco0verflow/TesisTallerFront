@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { TrashIcon } from "@heroicons/react/24/solid";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 export default function ModalTipoTarea({ idTipoTarea, isOpen, onClose, setTipoTareaModificada, modo }) {
   const [loading, setLoading] = useState(true);

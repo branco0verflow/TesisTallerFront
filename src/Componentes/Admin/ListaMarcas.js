@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ModalMarca from "./ModalMarca";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 export default function ListaMarcas() {
   const [marcas, setMarcas] = useState([]);

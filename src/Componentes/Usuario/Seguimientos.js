@@ -9,6 +9,7 @@ import {
 } from "@heroicons/react/24/solid";
 import MenuNavBar from "./MenuNavBar";
 import { useSeguimiento } from "../SeguimientoContext";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 export default function Seguimientos() {
   const { seguimientoData, updateSeguimiento } = useSeguimiento();
@@ -34,7 +35,7 @@ export default function Seguimientos() {
 
     try {
       const res = await fetch(
-        `http://localhost:8081/sgc/api/v1/seguimiento?documento=${cedula}&email=${email}`
+        `${API_BASE_URL}seguimiento?documento=${cedula}&email=${email}`
       );
       if (!res.ok) throw new Error("No se encontró el cliente o hubo un error en la búsqueda");
       const data = await res.json();
@@ -73,7 +74,7 @@ export default function Seguimientos() {
         listaVehiculos.map(async (v) => {
           try {
             const resp = await fetch(
-              `http://localhost:8081/sgc/api/v1/reserva/verificarReservaActiva?idVehiculo=${v.idVehiculo}`
+              `${API_BASE_URL}reserva/verificarReservaActiva?idVehiculo=${v.idVehiculo}`
             );
             const tiene = await resp.json();
             return { idVehiculo: v.idVehiculo, tiene };
@@ -97,7 +98,7 @@ export default function Seguimientos() {
   /* -------------  RESERVAS POR VEHÍCULO ------------- */
   const obtenerReservas = async (idVehiculo) => {
     try {
-      const res = await fetch(`http://localhost:8081/sgc/api/v1/reserva/vehiculo/${idVehiculo}`);
+      const res = await fetch(`${API_BASE_URL}reserva/vehiculo/${idVehiculo}`);
       if (!res.ok) throw new Error();
       setReservas(await res.json());
       setMostrar(true);
@@ -116,7 +117,7 @@ export default function Seguimientos() {
     if (!confirmar) return;
 
     try {
-      const response = await fetch(`http://localhost:8081/sgc/api/v1/reserva/${idReserva}/cancelar`, {
+      const response = await fetch(`${API_BASE_URL}reserva/${idReserva}/cancelar`, {
         method: "DELETE",
       });
 
