@@ -4,6 +4,7 @@ import ModalCalendario from "./ModalCalendario";
 import ModalHorarios from "./ModalHorarios";
 import { CalendarIcon } from "@heroicons/react/24/solid";
 import { API_BASE_URL } from "../../config/apiConfig";
+import Loading2 from "../Loading2";
 
 
 export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
@@ -15,6 +16,7 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
     const [diasDisponibles, setDiasDisponibles] = useState([]);
     const [formValido, setFormValido] = useState(false);
     const [DisponibilidadButtonVisible, setDisponibilidadButtonVisible] = useState(false);
+    const [cargando, setCargando] = useState(false);
 
 
     const fecha = new Date(`${formData.fechaSeleccionada}T12:00:00`);
@@ -96,6 +98,7 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
     };
 
     const consultarDisponibilidad = () => {
+        setCargando(true);
         const ids = formData.tareas.map(t => t.idTipoTarea);
         const queryParams = new URLSearchParams({
             ids: ids.join(","),
@@ -103,18 +106,31 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
         });
 
         fetch(`${API_BASE_URL}disponibilidad?${queryParams}`)
-            .then(res => res.json())
+            .then(async res => {
+                if (!res.ok) {
+                    const text = await res.text(); // porque no es JSON
+                    throw new Error(text); // lo captura el catch
+                }
+                return res.json();
+            })
             .then(data => {
                 setDiasDisponibles(data);
+                setCargando(false);
                 setMostrarCalendario(true);
             })
-            .catch(err => console.error("Error al consultar disponibilidad:", err));
+            .catch(err => {
+                setCargando(false);
+                console.error("Error al consultar disponibilidad:", err.message);
+                alert("Ocurrió un error al consultar disponibilidad:\n" + err.message);
+            });
+
     };
 
     const handleSeleccionDia = (fecha) => {
         if (!fecha) return; // para prevenir un estado nulo da problemas resolver BB
 
         setMostrarCalendario(false);
+        setCargando(true);
 
         setFormData(prev => ({
             ...prev,
@@ -131,6 +147,7 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
             .then(res => res.json())
             .then(data => {
                 setHorarios(data);
+                setCargando(false);
                 setMostrarHorarios(true);
             })
             .catch(err => console.error("Error al consultar horarios:", err));
@@ -162,6 +179,9 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
 
     return (
         <div className="animate-fade-in max-w-2xl mx-auto px-4 py-6 space-y-6">
+            {(cargando && 
+                <Loading2 />
+            )}
             {/* Sección Tareas */}
             <div>
                 <label htmlFor="tarea" className="block text-sm font-medium text-gray-700 mb-1">

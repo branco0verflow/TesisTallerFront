@@ -40,7 +40,7 @@ export default function ListaModelos() {
 
   const fetchMarcas = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}marca`);
+      const res = await fetch(`${API_BASE_URL}marca/filtros`);
       const data = await res.json();
       setMarcas(data);
     } catch (err) {

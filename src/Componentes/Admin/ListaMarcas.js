@@ -5,28 +5,35 @@ import { API_BASE_URL } from "../../config/apiConfig";
 
 export default function ListaMarcas() {
   const [marcas, setMarcas] = useState([]);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const [paginaActual, setPaginaActual] = useState(1);
   const [modoModal, setModoModal] = useState("view");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [marcaSeleccionada, setMarcaSeleccionada] = useState(null);
   const [marcaModificada, setMarcaModificada] = useState(false);
   const navigate = useNavigate();
 
+  const marcasPorPagina = 20;
+
   useEffect(() => {
-    fetchMarcas();
-  }, []);
+    setPaginaActual(1); // reiniciar a la página 1
+    fetchMarcas(0, marcasPorPagina, marcaSeleccionada);
+  }, [marcaSeleccionada]);
 
   useEffect(() => {
     if (marcaModificada) {
-      fetchMarcas();
+      fetchMarcas(0, marcasPorPagina, marcaModificada);
       setMarcaModificada(false);
+      setPaginaActual(1);
     }
   }, [marcaModificada]);
 
-  const fetchMarcas = async () => {
+  const fetchMarcas = async (pagina = 0, size = 20) => {
     try {
-      const response = await fetch(`${API_BASE_URL}marca`);
+      const response = await fetch(`${API_BASE_URL}marca?page=${pagina}&size=${size}`);
       const data = await response.json();
-      setMarcas(data);
+      setMarcas(data.content);
+      setTotalPaginas(data.totalPages);
     } catch (error) {
       console.error("Error al obtener marcas:", error);
     }
@@ -110,6 +117,31 @@ export default function ListaMarcas() {
             ))}
           </tbody>
         </table>
+        <div className="flex justify-center mt-4 gap-2">
+          <button
+            onClick={() => {
+              const nuevaPagina = Math.max(paginaActual - 1, 1);
+              setPaginaActual(nuevaPagina);
+              fetchMarcas(nuevaPagina - 1, marcasPorPagina, marcaSeleccionada);
+            }}
+            disabled={paginaActual === 1}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          >
+            Anterior
+          </button>
+          <span className="px-3 py-1">{paginaActual}</span>
+          <button
+            onClick={() => {
+              const nuevaPagina = paginaActual + 1;
+              setPaginaActual(nuevaPagina);
+              fetchMarcas(nuevaPagina - 1, marcasPorPagina, marcaSeleccionada);
+            }}
+            disabled={paginaActual >= totalPaginas}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          >
+            Siguiente
+          </button>
+        </div>
       </div>
 
       <ModalMarca
