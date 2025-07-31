@@ -4,12 +4,14 @@ import "react-day-picker/dist/style.css";
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../config/apiConfig";
+import Loading2 from "../Loading2";
 
 export default function FormularioTareasReten() {
     const [mecanicos, setMecanicos] = useState([]);
     const [mecanicosSeleccionados, setMecanicosSeleccionados] = useState([]);
     const [fechaDesde, setFechaDesde] = useState(null);
     const [fechaHasta, setFechaHasta] = useState(null);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -34,6 +36,7 @@ export default function FormularioTareasReten() {
             toast.error("Selecciona fechas válidas y al menos un mecánico");
             return;
         }
+        setLoading(true);
 
         fetch(`${API_BASE_URL}tarea/reten`, {
             method: "POST",
@@ -52,7 +55,9 @@ export default function FormularioTareasReten() {
                     setMecanicosSeleccionados([]);
                     setFechaDesde(null);
                     setFechaHasta(null);
+                    setLoading(false);
                 } else {
+                    setLoading(false);
                     toast.error("Error al crear tareas retén");
                     console.log("Enviando:", {
                         idMecanicos: mecanicosSeleccionados,
@@ -68,7 +73,7 @@ export default function FormularioTareasReten() {
     return (
         <div className="p-6 max-w-4xl mx-auto bg-white rounded-xl shadow-lg space-y-6">
             <Toaster />
-
+            {loading && <Loading2 />}
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold text-gray-800">Crear tareas retén</h2>
                 <button

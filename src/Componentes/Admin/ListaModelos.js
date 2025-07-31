@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ModalModelo from "./ModalModelo";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../config/apiConfig";
+import Loading2 from "../Loading2";
 
 export default function ListaModelos() {
   const [modelos, setModelos] = useState([]);
@@ -13,6 +14,7 @@ export default function ListaModelos() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [marcas, setMarcas] = useState([]);
   const [marcaSeleccionada, setMarcaSeleccionada] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const modelosPorPagina = 20;
   const navigate = useNavigate();
@@ -39,6 +41,7 @@ export default function ListaModelos() {
   }, [modeloModificado]);
 
   const fetchMarcas = async () => {
+    
     try {
       const res = await fetch(`${API_BASE_URL}marca/filtros`);
       const data = await res.json();
@@ -46,10 +49,12 @@ export default function ListaModelos() {
     } catch (err) {
       console.error("Error al obtener marcas:", err);
     }
+    
   };
 
   const fetchModelos = async (pagina = 0, size = 20, marcaId = "") => {
     try {
+      setLoading(true);
       const url = marcaId
         ? `${API_BASE_URL}modelo/marca/${marcaId}?page=${pagina}&size=${size}`
         : `${API_BASE_URL}modelo?page=${pagina}&size=${size}`;
@@ -58,8 +63,10 @@ export default function ListaModelos() {
       const data = await res.json();
       setModelos(data.content);
       setTotalPaginas(data.totalPages);
+      setLoading(false);
     } catch (err) {
       console.error("Error al obtener modelos paginados:", err);
+      setLoading(false);
     }
   };
   const abrirModal = (modo, id = null) => {
@@ -75,6 +82,7 @@ export default function ListaModelos() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto bg-white shadow rounded-xl">
+      {loading && <Loading2 />}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Listado de Modelos</h1>
         <div className="mb-4">

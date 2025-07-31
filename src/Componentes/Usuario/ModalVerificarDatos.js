@@ -2,10 +2,13 @@ import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { useSeguimiento } from "../SeguimientoContext";
 import { API_BASE_URL } from "../../config/apiConfig";
+import Loading2 from "../Loading2";
+import { useState } from "react";
 
 export default function ModalVerificarDatos({ formData, onClose, onConfirm }) {
 
     const { updateSeguimiento } = useSeguimiento();
+    const [loading, setLoading] = useState(false);
 
     const fecha = new Date(`${formData.fechaSeleccionada}T12:00:00`);
 
@@ -24,6 +27,7 @@ export default function ModalVerificarDatos({ formData, onClose, onConfirm }) {
 
 
     const handleSubmitReserva = async () => {
+        setLoading(true);
 
         const padTime = (str) => (str.length === 5 ? str + ":00" : str); // SpringBoot no interpreta las horas sin ser time.SQL 8:00:00
 
@@ -58,6 +62,7 @@ export default function ModalVerificarDatos({ formData, onClose, onConfirm }) {
         try {
 
             if (!formData.NombreCliente || !formData.fechaSeleccionada) {
+                setLoading(false);
                 toast.error("Faltan datos importantes");
                 return;
             }
@@ -80,16 +85,19 @@ export default function ModalVerificarDatos({ formData, onClose, onConfirm }) {
 
 
             if (!response.ok) {
+                setLoading(false);
                 const errorText = await response.text();
                 console.error("Error del servidor:", errorText);
                 toast.error("Error al crear la reserva");
 
             } else {
+                setLoading(false);
                 toast.success("Reserva creada con éxito");
                 setTimeout(() => navigate("/seguimiento"), 2000);
             }
 
         } catch (error) {
+            setLoading(false);
             console.error("Error de red:", error);
             toast.error("No se pudo conectar con el servidor");
             console.log("Datos que se envían:", todosLosDatosReserva);
@@ -100,49 +108,60 @@ export default function ModalVerificarDatos({ formData, onClose, onConfirm }) {
 
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-            <div className="bg-white rounded-2xl shadow-xl max-w-xl w-full p-6 relative">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                    {formData.NombreCliente}, necesitamos que confirmes los datos.
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm px-4">
+            {loading && <Loading2 />}
+
+            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-8 relative">
+                <h2 className="text-2xl font-bold text-gray-800 mb-2 text-center">
+                    ¡Hola {formData.NombreCliente}!
                 </h2>
-                <p className="mb-2 text-gray-700"><strong>Cita para el:</strong> {fechaCapitalizada}, ingresa a las {formData.horaInicio}.</p>
+                <p className="text-center text-gray-600 mb-6">
+                    Por favor, revisa y confirma los datos antes de agendar tu cita.
+                </p>
 
-                <p className="mb-6 text-gray-700"><strong>Motivo:</strong> {formData.tareas.map(t => t.nombreTipoTarea).join(", ")}.</p>
+                <div className="space-y-4 text-sm sm:text-base text-gray-700">
+                    <div className="bg-gray-50 rounded-lg p-4 border">
+                        <p><strong>Cita:</strong> {fechaCapitalizada} a las {formData.horaInicio}</p>
+                        <p><strong>Motivo:</strong> {formData.tareas.map(t => t.nombreTipoTarea).join(", ")}</p>
+                    </div>
 
+                    <div className="bg-gray-50 rounded-lg p-4 border">
+                        <p><strong>Contacto:</strong> {formData.TelefonoCliente}</p>
+                        <p><strong>Cédula:</strong> {formData.CedulaCliente}</p>
+                        <p><strong>Email:</strong> {formData.EmailCliente}</p>
+                    </div>
 
-                <p className="mb-1"><strong>Contacto:</strong> {formData.TelefonoCliente}</p>
-                <p className="mb-1"><strong>Nro Cédula:</strong> {formData.CedulaCliente}</p>
-                <p className="mb-1"><strong>Email:</strong> {formData.EmailCliente}</p>
-
-                <div className="mt-4 border-t pt-4">
-                    <p className="mb-1"><strong>Marca:</strong> {formData.NombreMarca}</p>
-                    <p className="mb-1"><strong>Modelo:</strong> {formData.NombreModelo}</p>
-                    <p className="mb-1"><strong>Matrícula:</strong> {formData.NroMatricula}</p>
-                    <p className="mb-1"><strong>Chasis:</strong> {formData.NroChasisVehiculo}</p>
-                    <p className="mb-1"><strong>Motor:</strong> {formData.NroMotorVehiculo}</p>
-                    <p className="mb-1"><strong>Año:</strong> {formData.AnoVehiculo}</p>
-                    <p className="mb-1"><strong>Cilindrada:</strong> {formData.CilindradaVehiculo} cc</p>
-                    <p className="mb-1"><strong>Kilometraje:</strong> {formData.KilometrajeVehiculo} km</p>
-                    {formData.comentario && (
-                        <p className="mt-2 italic text-gray-600">Comentario: {formData.comentario}</p>
-                    )}
+                    <div className="bg-gray-50 rounded-lg p-4 border">
+                        <p><strong>Marca:</strong> {formData.NombreMarca}</p>
+                        <p><strong>Modelo:</strong> {formData.NombreModelo}</p>
+                        <p><strong>Matrícula:</strong> {formData.NroMatricula}</p>
+                        <p><strong>Chasis:</strong> {formData.NroChasisVehiculo}</p>
+                        <p><strong>Motor:</strong> {formData.NroMotorVehiculo}</p>
+                        <p><strong>Año:</strong> {formData.AnoVehiculo}</p>
+                        <p><strong>Cilindrada:</strong> {formData.CilindradaVehiculo} cc</p>
+                        <p><strong>Kilometraje:</strong> {formData.KilometrajeVehiculo} km</p>
+                        {formData.comentario && (
+                            <p className="italic text-gray-500 mt-2">Comentario: {formData.comentario}</p>
+                        )}
+                    </div>
                 </div>
 
-                <div className="mt-6 flex justify-between">
+                <div className="mt-8 flex flex-col sm:flex-row justify-between gap-4">
                     <button
                         onClick={onClose}
-                        className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition"
+                        className="w-full sm:w-auto bg-gray-200 text-gray-700 px-5 py-2.5 rounded-lg hover:bg-gray-300 transition font-medium"
                     >
                         Modificar datos
                     </button>
                     <button
                         onClick={handleSubmitReserva}
-                        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+                        className="w-full sm:w-auto bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition font-semibold"
                     >
-                        Todo listo
+                        Confirmar y reservar
                     </button>
                 </div>
             </div>
         </div>
+
     );
 }

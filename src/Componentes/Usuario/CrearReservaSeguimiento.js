@@ -7,6 +7,7 @@ import MenuNavBar from "./MenuNavBar";
 import { useSeguimiento } from "../SeguimientoContext";
 import toast, { Toaster } from "react-hot-toast";
 import { API_BASE_URL } from "../../config/apiConfig";
+import Loading2 from "../Loading2";
 
 export default function CrearReservaSeguimiento({ onReservaCreada }) {
 
@@ -125,6 +126,7 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
     };
 
     const consultarDisponibilidad = () => {
+        setLoading(true);
         const ids = nuevaReserva.tareas.map(t => t.idTipoTarea);
         const queryParams = new URLSearchParams({
             ids: ids.join(","),
@@ -137,13 +139,15 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
                 setDiasDisponibles(data);
                 setMostrarCalendario(true);
             })
-            .catch(err => console.error("Error al consultar disponibilidad:", err));
+            .catch(err => console.error("Error al consultar disponibilidad:", err))
+            .finally(() => setLoading(false));
     };
 
     const handleSeleccionDia = (fecha) => {
         if (!fecha) return;
 
         setMostrarCalendario(false);
+        setLoading(true);
 
         const fechaISO = fecha.toISOString().split("T")[0];
         setNuevaReserva(prev => ({ ...prev, fechaSeleccionada: fechaISO }));
@@ -160,7 +164,8 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
                 setHorarios(data);
                 setMostrarHorarios(true);
             })
-            .catch(err => console.error("Error al consultar horarios:", err));
+            .catch(err => console.error("Error al consultar horarios:", err))
+            .finally(() => setLoading(false));
     };
 
     const handleSeleccionHorario = (horario) => {
@@ -241,6 +246,9 @@ export default function CrearReservaSeguimiento({ onReservaCreada }) {
 
     return (
         <>
+        {(loading && 
+            <Loading2 />
+        )}
             <MenuNavBar />
             <Toaster position="top-right" />
 

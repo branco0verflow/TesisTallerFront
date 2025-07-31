@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ModalTipoTarea from "./ModalTipoTarea";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../config/apiConfig";
+import Loading2 from "../Loading2";
 
 export default function ListaTipoTareas() {
   const [tipoTareas, settipoTareas] = useState([]);
@@ -10,6 +11,7 @@ export default function ListaTipoTareas() {
   const [tipoTareaSeleccionada, setTipoTareaSeleccionada] = useState(null);
   const [tipoTareaModificada, setTipoTareaModificada] = useState(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchTipotarea();
@@ -24,11 +26,14 @@ export default function ListaTipoTareas() {
 
   const fetchTipotarea = async () => {
     try {
+      setLoading(true);
       const response = await fetch(`${API_BASE_URL}tipotarea`);
       const data = await response.json();
       settipoTareas(data);
+      setLoading(false);
     } catch (error) {
       console.error("Error al obtener tipos de tareas:", error);
+      setLoading(false);
     }
   };
 
@@ -50,6 +55,7 @@ export default function ListaTipoTareas() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white shadow rounded-xl">
+      {loading && <Loading2 />}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Listado de Tipos de Tarea</h1>
         <div className="flex gap-3">

@@ -5,7 +5,7 @@ import LogosBar from "./LogosBar";
 import Footer from "./Footer";
 import MigasDePan from "./MigasDePan";
 import VideoPrincipal from "../../Video/videoPrincipal.mp4";
-import bgSeguimiento from '../../Images/HomeSeguimiento.png';
+import bgSeguimiento from '../../Images/HomeSeguimiento2.png';
 
 export default function Home() {
     return (
@@ -13,7 +13,7 @@ export default function Home() {
             <MenuNavBar />
 
 
-            <div className="relative w-full h-[55vh] overflow-hidden shadow-lg">
+            <div className="relative w-full h-[55vh] overflow-hidden">
 
                 <video
                     autoPlay
@@ -63,7 +63,7 @@ export default function Home() {
                 <div className="relative z-10 max-w-2xl mx-auto space-y-6">
                     {/* Título con entrada animada */}
                     <h2 className="animate-fade-in-up text-3xl sm:text-4xl font-extrabold tracking-wide leading-tight text-gray-600 drop-shadow-md">
-                        Hacé <span className="text-teal-700">seguimiento</span> de tu cita
+                        Hacé <span className="text-sky-800">seguimiento</span> de tu cita
                     </h2>
 
                     {/* Párrafo con delay */}
@@ -74,7 +74,7 @@ export default function Home() {
                     {/* Botón con delay extra */}
                     <Link
                         to="/seguimiento"
-                        className="inline-block animate-bounce bg-teal-200 text-emerald-700 font-semibold px-6 py-3 rounded-full shadow hover:scale-100 hover:shadow-lg transition transform duration-200"
+                        className="inline-block animate-bounce bg-sky-200 text-sky-900 font-semibold px-6 py-3 rounded-full shadow-lg hover:scale-100 transition transform duration-200"
                     >
                         Mis Reservas
                     </Link>

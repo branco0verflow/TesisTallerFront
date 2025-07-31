@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ModalMarca from "./ModalMarca";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../config/apiConfig";
+import Loading2 from "../Loading2";
 
 export default function ListaMarcas() {
   const [marcas, setMarcas] = useState([]);
@@ -12,6 +13,7 @@ export default function ListaMarcas() {
   const [marcaSeleccionada, setMarcaSeleccionada] = useState(null);
   const [marcaModificada, setMarcaModificada] = useState(false);
   const navigate = useNavigate();
+      const [loading, setLoading] = useState(false);
 
   const marcasPorPagina = 20;
 
@@ -30,12 +32,15 @@ export default function ListaMarcas() {
 
   const fetchMarcas = async (pagina = 0, size = 20) => {
     try {
+      setLoading(true);
       const response = await fetch(`${API_BASE_URL}marca?page=${pagina}&size=${size}`);
       const data = await response.json();
       setMarcas(data.content);
       setTotalPaginas(data.totalPages);
+      setLoading(false);
     } catch (error) {
       console.error("Error al obtener marcas:", error);
+      setLoading(false);
     }
   };
 
@@ -57,6 +62,7 @@ export default function ListaMarcas() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white shadow rounded-xl">
+      {loading && <Loading2 />}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Listado de Marcas</h1>
         <div className="flex items-center justify-between mb-4">

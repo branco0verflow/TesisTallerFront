@@ -21,22 +21,37 @@ export default function ModalCrearTarea({ isOpen, onClose, onCrear, fecha, idMec
     };
 
     const handleSubmit = () => {
-        const nuevaTarea = {
-            fechaTarea: fecha.toISOString().split("T")[0],
-            horaIngresoTarea: form.horaInicio + ":00",
-            horaFinTarea: form.horaFin + ":00",
-            descripcionTarea: form.descripcion,
-            esReservaTarea: false,
-            idMecanico,
-            idEstado: 2,
-            idAdmin: admin?.idAdmin
-            
-        };
-        onCrear(nuevaTarea);
-        onClose();
-        console.log(nuevaTarea);
-        console.log("fecha es null: " + fecha);
+    const [horaInicioH, horaInicioM] = form.horaInicio.split(":").map(Number);
+    const [horaFinH, horaFinM] = form.horaFin.split(":").map(Number);
+
+    const inicio = new Date();
+    inicio.setHours(horaInicioH, horaInicioM, 0);
+
+    const fin = new Date();
+    fin.setHours(horaFinH, horaFinM, 0);
+
+    const diferenciaMin = (fin - inicio) / 60000; // diferencia en minutos
+
+    if (diferenciaMin < 10) {
+        alert("La tarea debe tener al menos 10 minutos de duración.");
+        return;
+    }
+
+    const nuevaTarea = {
+        fechaTarea: fecha.toISOString().split("T")[0],
+        horaIngresoTarea: form.horaInicio + ":00",
+        horaFinTarea: form.horaFin + ":00",
+        descripcionTarea: form.descripcion,
+        esReservaTarea: false,
+        idMecanico,
+        idEstado: 2,
+        idAdmin: admin?.idAdmin
     };
+
+    onCrear(nuevaTarea);
+    onClose();
+};
+
 
     if (!isOpen) return null;
 
