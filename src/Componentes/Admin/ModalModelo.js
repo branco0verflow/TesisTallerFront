@@ -34,7 +34,7 @@ export default function ModalModelo({ idModelo, isOpen, onClose, setModeloModifi
   }, [idModelo, isOpen, modo]);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}marca`)
+    fetch(`${API_BASE_URL}marca/filtros`)
       .then(res => res.json())
       .then(data => setMarcas(data))
       .catch(err => console.error("Error al obtener marcas:", err));

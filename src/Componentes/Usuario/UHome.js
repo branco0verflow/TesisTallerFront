@@ -24,7 +24,6 @@ export default function Home() {
                     poster="/poster.jpg"
                     className="absolute inset-0 w-full h-full object-cover"
                 >
-
                     <source src={VideoPrincipal} type="video/mp4" />
                     Tu navegador no soporta video HTML5.
                 </video>
