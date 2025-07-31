@@ -82,8 +82,8 @@ const [fechaSeleccionada, setFechaSeleccionada] = useState(() =>
 
   useEffect(() => {
     if (tareaModificada) {
-      toast.success("Modificación exitosa");
-      setTimeout(() => setTareaModificada(false), 2000); // más tiempo para que se vea bien
+      setTareaModificada(false);
+      setTimeout(() => toast.success("Modificación exitosa"), 2000); // más tiempo para que se vea bien
     }
   }, [tareaModificada]);
 
@@ -427,7 +427,6 @@ const [fechaSeleccionada, setFechaSeleccionada] = useState(() =>
               .then(res => res.json())
               .then(data => {
                 setTareas(data);
-                setModalCrearVisible(false);
               })
               .catch(err => {
                 console.error("Error al crear tarea:", err);

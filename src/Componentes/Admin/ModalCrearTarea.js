@@ -49,6 +49,7 @@ export default function ModalCrearTarea({ isOpen, onClose, onCrear, fecha, idMec
     };
 
     onCrear(nuevaTarea);
+    form.descripcion = "";
     onClose();
 };
 
