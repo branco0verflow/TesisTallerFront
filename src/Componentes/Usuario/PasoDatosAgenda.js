@@ -179,7 +179,7 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
 
     return (
         <div className="animate-fade-in max-w-2xl mx-auto px-4 py-6 space-y-6">
-            {(cargando && 
+            {(cargando &&
                 <Loading2 />
             )}
             {/* Sección Tareas */}
@@ -195,7 +195,9 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
                         onChange={(e) => setTareaSeleccionada(e.target.value)}
                         className="w-full border border-gray-300 rounded-md p-2"
                     >
-                        <option value="">Motivos de cita</option>
+                        <option value="" disabled hidden>
+                            Motivo de cita
+                        </option>
                         {tareasDisponibles.map((tarea) => (
                             <option
                                 key={tarea.idTipoTarea}

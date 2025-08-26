@@ -216,7 +216,8 @@ export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanico
               className="border px-2 py-1 mt-1 rounded"
             >
               <option value="">{tarea.estado.nombreEstado}</option>
-              {estados.map((es) => (
+              {estados.filter((es) => es.idEstado !== tarea.estado.idEstado)
+              .map((es) => (
                 <option key={es.idEstado} value={es.idEstado}>
                   {es.nombreEstado}
                 </option>
@@ -236,7 +237,8 @@ export default function ModalModificarTarea({ idTarea, isOpen, onClose, mecanico
             <option value="">
               {tarea.mecanico.nombreMecanico} {tarea.mecanico.apellidoMecanico}
             </option>
-            {mecanicos.map((m) => (
+            {mecanicos.filter((m) => m.idMecanico !== tarea.idMecanico)
+            .map((m) => (
               <option key={m.idMecanico} value={m.idMecanico}>
                 {m.nombreMecanico} {m.apellidoMecanico}
               </option>
