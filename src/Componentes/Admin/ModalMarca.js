@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { TrashIcon } from "@heroicons/react/24/solid";
 import { API_BASE_URL } from "../../config/apiConfig";
 
 export default function ModalMarca({ idMarca, isOpen, onClose, setMarcaModificada, modo }) {
@@ -75,6 +76,27 @@ export default function ModalMarca({ idMarca, isOpen, onClose, setMarcaModificad
       });
   };
 
+  const eliminarMarca = () => {
+    if (!window.confirm("¿Estás seguro de eliminar esta marca?")) return;
+
+    fetch(`${API_BASE_URL}marca/${idMarca}`, {
+      method: "DELETE",
+    })
+      .then(res => {
+        if (res.ok) {
+          toast.success("Marca eliminado");
+          setMarcaModificada(true);
+          onClose();
+        } else {
+          toast.error("No se pudo eliminar la marca");
+        }
+      })
+      .catch(err => {
+        console.error("Error en el servidor:", err);
+        toast.error("Error de red");
+      });
+  };
+
   if (!isOpen) return null;
   if (loading) return <div className="p-4">Cargando marca...</div>;
 
@@ -97,6 +119,15 @@ export default function ModalMarca({ idMarca, isOpen, onClose, setMarcaModificad
         </label>
 
         <div className="flex justify-between items-center mt-6">
+          {modo === "edit" && (
+            <button
+              onClick={eliminarMarca}
+              className="p-2 rounded-full bg-red-400 hover:bg-red-600 text-white transition"
+              title="Eliminar Marca"
+            >
+              <TrashIcon className="w-5 h-5" />
+            </button>
+          )}
 
           <div className="flex space-x-2">
             <button onClick={onClose} className="bg-gray-300 px-4 py-2 rounded">

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { TrashIcon } from "@heroicons/react/24/solid";
 import { API_BASE_URL } from "../../config/apiConfig";
 
 
@@ -89,6 +90,27 @@ export default function ModalModelo({ idModelo, isOpen, onClose, setModeloModifi
       });
   };
 
+  const eliminarModelo = () => {
+    if (!window.confirm("¿Estás seguro de eliminar este modelo?")) return;
+
+    fetch(`${API_BASE_URL}modelo/${idModelo}`, {
+      method: "DELETE",
+    })
+      .then(res => {
+        if (res.ok) {
+          toast.success("Modelo eliminado");
+          setModeloModificado(true);
+          onClose();
+        } else {
+          toast.error("No se pudo eliminar el modelo");
+        }
+      })
+      .catch(err => {
+        console.error("Error en el servidor:", err);
+        toast.error("Error de red");
+      });
+  };
+
 
   if (!isOpen) return null;
   if (loading) return <div className="p-4">Cargando modelo...</div>;
@@ -134,6 +156,15 @@ export default function ModalModelo({ idModelo, isOpen, onClose, setModeloModifi
         </label>
 
         <div className="flex justify-between items-center mt-6">
+          {modo === "edit" && (
+            <button
+              onClick={eliminarModelo}
+              className="p-2 rounded-full bg-red-400 hover:bg-red-600 text-white transition"
+              title="Eliminar Modelo"
+            >
+              <TrashIcon className="w-5 h-5" />
+            </button>
+          )}
 
           <div className="flex space-x-2">
             <button onClick={onClose} className="bg-gray-300 px-4 py-2 rounded">
