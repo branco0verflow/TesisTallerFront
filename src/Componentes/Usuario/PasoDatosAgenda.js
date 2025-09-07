@@ -73,9 +73,9 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
         setTareaSeleccionada("");
     };
 
-    const corroborarFuncionamiento = () => {
+    /*const corroborarFuncionamiento = () => {
         console.log(formData);
-    }
+    }*/
 
     useEffect(() => {
         if (Array.isArray(formData.tareas) && formData.tareas.length > 0) {
@@ -163,7 +163,7 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
                 horaFin: horario.horaFin,
                 IdMecanico: horario.idMecanico
             };
-            console.log("Horario seleccionado y formData actualizado:", nuevoFormData);
+            //console.log("Horario seleccionado y formData actualizado:", nuevoFormData);
             return nuevoFormData;
         });
     };
@@ -308,8 +308,8 @@ export default function PasoDatosAgenda({ formData, setFormData, onNext }) {
                     onClick={() => {
                         if (formValido) {
                             onNext();
-                            console.log(formData);
-                            console.log(formData.horaInicio + formData.horaFin);
+                            //console.log(formData);
+                            //console.log(formData.horaInicio + formData.horaFin);
                         } else {
                             toast.error("Por favor corregí los errores antes de continuar");
                         }

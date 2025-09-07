@@ -31,7 +31,7 @@ export default function IngresoVision({ onNext, onVolver, formData, setFormData 
     formDataToSend.append("imagen", imagen);
 
     try {
-      const response = await fetch("http://localhost:3001/detectar-texto", {
+      const response = await fetch("https://googlevisiontesis.onrender.com", {
         method: "POST",
         body: formDataToSend,
       });
