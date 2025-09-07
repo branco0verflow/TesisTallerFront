@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Loading2 from "../Loading2";
 
 export default function IngresoVision({ onNext, onVolver, formData, setFormData }) {
   const [imagen, setImagen] = useState(null);
@@ -70,6 +71,9 @@ export default function IngresoVision({ onNext, onVolver, formData, setFormData 
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
+      {(cargando &&
+                <Loading2 />
+            )}
       <h2 className="text-2xl font-bold mb-2 text-blue-800">Escanear libreta</h2>
       <p className="text-sm text-gray-600 mb-4">
         Tomá una foto o seleccioná una imagen de la libreta del vehículo. Extraeremos los datos automáticamente.
