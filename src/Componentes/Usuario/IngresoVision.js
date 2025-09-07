@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import Loading2 from "../Loading2";
 
+
+
 export default function IngresoVision({ onNext, onVolver, formData, setFormData }) {
   const [imagen, setImagen] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -8,10 +10,11 @@ export default function IngresoVision({ onNext, onVolver, formData, setFormData 
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+  const API_OCR = "https://googlevisiontesis.onrender.com";
 
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
     setImagen(file);
     setPreviewUrl(URL.createObjectURL(file));
     setDatos(null);
@@ -32,12 +35,20 @@ export default function IngresoVision({ onNext, onVolver, formData, setFormData 
     formDataToSend.append("imagen", imagen);
 
     try {
-      const response = await fetch("https://googlevisiontesis.onrender.com", {
+      const response = await fetch(`${API_OCR}/detectar-texto`, {
         method: "POST",
-        body: formDataToSend,
+        body: formDataToSend, // NO setees Content-Type manualmente
       });
 
-      const data = await response.json();
+      if (!response.ok) {
+        const txt = await response.text(); // puede venir HTML de error
+        throw new Error(`HTTP ${response.status} - ${txt.slice(0, 200)}`);
+      }
+
+      const ct = response.headers.get("content-type") || "";
+      const data = ct.includes("application/json")
+        ? await response.json()
+        : { error: "Respuesta no JSON del servidor." };
 
       if (data.error) {
         setError(data.error);
@@ -46,7 +57,7 @@ export default function IngresoVision({ onNext, onVolver, formData, setFormData 
       }
     } catch (err) {
       console.error("Error al enviar la imagen:", err);
-      setError("Error de conexión con el servidor.");
+      setError(err.message || "Error de conexión con el servidor.");
     } finally {
       setCargando(false);
     }
@@ -55,18 +66,20 @@ export default function IngresoVision({ onNext, onVolver, formData, setFormData 
   useEffect(() => {
     if (!datos) return;
 
+    // Actualiza el formulario con lo detectado
     setFormData((prev) => ({
       ...prev,
       NombreMarca: datos.marca || "",
       NombreModelo: datos.modelo || "",
       NroChasisVehiculo: datos.chasis || "",
-      NroMotorVehiculo: datos.motor?.toUpperCase() || "",
-      NroMatricula: datos.matricula?.toUpperCase() || "",
+      NroMotorVehiculo: datos.motor?.toUpperCase?.() || "",
+      NroMatricula: datos.matricula?.toUpperCase?.() || "",
       CilindradaVehiculo: datos.cilindrada || "",
       AnoVehiculo: datos.anio || "",
     }));
 
-    onVolver();
+    // Regresar al paso anterior - ------------- pero si querés
+    onVolver?.();
   }, [datos]);
 
   return (
@@ -79,22 +92,22 @@ export default function IngresoVision({ onNext, onVolver, formData, setFormData 
         Tomá una foto o seleccioná una imagen de la libreta del vehículo. Extraeremos los datos automáticamente.
       </p>
 
-      {/* Input oculto con botón custom */}
-      <label className="block w-full mb-4">
+      {/* Input oculto + botón custom */}
+      <label className="block w-full mb-4" htmlFor="fotoInput">
         <input
+          id="fotoInput"
           type="file"
           accept="image/*"
           capture="environment"
           onChange={handleFileChange}
           className="hidden"
-          id="fotoInput"
         />
         <span className="cursor-pointer inline-block w-full text-center bg-white border border-blue-500 text-blue-600 font-semibold py-2 px-4 rounded hover:bg-blue-50 transition">
           {imagen ? "Cambiar imagen" : "Tomar o subir una foto"}
         </span>
       </label>
 
-      {/* Previsualización de la imagen */}
+      {/* Previsualización */}
       {previewUrl && (
         <div className="mb-4 text-center">
           <p className="text-sm text-gray-600 mb-2">Imagen seleccionada:</p>
@@ -106,7 +119,7 @@ export default function IngresoVision({ onNext, onVolver, formData, setFormData 
         </div>
       )}
 
-      {/* Zona de acción */}
+      {/* Acción */}
       <div className="border-2 border-dashed border-gray-300 p-6 rounded-lg text-center">
         <p className="text-gray-500 mb-4">(Usando Google Vision)</p>
         {!imagen ? (
@@ -115,8 +128,9 @@ export default function IngresoVision({ onNext, onVolver, formData, setFormData 
           <button
             className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition"
             onClick={handleUpload}
+            disabled={cargando}
           >
-            Detectar datos
+            {cargando ? "Procesando..." : "Detectar datos"}
           </button>
         )}
       </div>
@@ -135,3 +149,4 @@ export default function IngresoVision({ onNext, onVolver, formData, setFormData 
     </div>
   );
 }
+
